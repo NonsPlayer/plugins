@@ -53,9 +53,9 @@ pnpm catalogue:check --offline
 ## 数据地址
 
 ```text
-https://raw.githubusercontent.com/Miaoyww/plugins/meta/index.json
-https://raw.githubusercontent.com/Miaoyww/plugins/meta/<id>/all.json
-https://raw.githubusercontent.com/Miaoyww/plugins/meta/adapters/<id>/all.json
+https://raw.githubusercontent.com/NonsPlayer/plugins/meta/index.json
+https://raw.githubusercontent.com/NonsPlayer/plugins/meta/<id>/all.json
+https://raw.githubusercontent.com/NonsPlayer/plugins/meta/adapters/<id>/all.json
 ```
 
 ## 许可证

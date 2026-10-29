@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Miaoyww/plugins/schemas/plugin_info.schema.json",
+  "$id": "https://github.com/NonsPlayer/plugins/schemas/plugin_info.schema.json",
   "title": "NonsPlayer plugin registration",
   "type": "object",
   "additionalProperties": false,
