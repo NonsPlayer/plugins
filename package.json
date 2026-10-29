@@ -1,0 +1,23 @@
+{
+  "name": "nonsplayer-plugin-catalogue",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "NonsPlayer third-party plugin catalogue",
+  "license": "GPL-3.0-only",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "catalogue:check": "node scripts/check.mjs",
+    "catalogue:update": "node scripts/update.mjs"
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "ajv": "^8.20.0",
+    "fflate": "^0.8.3",
+    "semver": "^7.8.5"
+  }
+}

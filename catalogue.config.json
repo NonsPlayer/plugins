@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/Miaoyww/plugins",
+  "branch": "main",
+  "officialAuthors": [
+    {
+      "name": "NonsPlayer",
+      "link": "https://github.com/Miaoyww/Nons"
+    }
+  ],
+  "update": {
+    "maxReleases": 20
+  }
+}
