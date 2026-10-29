@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Miaoyww/plugins/schemas/plugin_info.schema.json",
+  "title": "NonsPlayer plugin registration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "repository", "branch", "authors", "license"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$",
+      "description": "Plugin ID. Must match the directory name and the manifest id."
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:\\.git)?/?$",
+      "description": "Public GitHub repository URL."
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[^\\s]+$"
+    },
+    "authors": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "link": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://"
+          }
+        }
+      }
+    },
+    "license": {
+      "type": "string",
+      "enum": [
+        "0BSD",
+        "AGPL-3.0-only",
+        "AGPL-3.0-or-later",
+        "Apache-2.0",
+        "BSD-2-Clause",
+        "BSD-3-Clause",
+        "GPL-3.0-only",
+        "GPL-3.0-or-later",
+        "ISC",
+        "LGPL-3.0-only",
+        "LGPL-3.0-or-later",
+        "MIT",
+        "MPL-2.0",
+        "Zlib"
+      ]
+    },
+    "related_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[^\\\\]+$",
+      "description": "Path to the plugin inside the repository. Use '.' for the repository root."
+    },
+    "labels": {
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]{0,31}$"
+      }
+    },
+    "preview": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https://"
+    },
+    "introduction": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 8,
+      "propertyNames": {
+        "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+      },
+      "patternProperties": {
+        "^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[^\\\\]+$"
+        }
+      },
+      "description": "Language tag to Markdown file path, relative to the plugin directory."
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
