@@ -2,17 +2,17 @@ import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { parseGitHubRepository } from './github.mjs'
 import { readJson, removeDir, writeJson, writeText } from './json.mjs'
-import { renderCatalogueReadme, renderPluginPage } from './markdown.mjs'
-import { buildAuthors, buildEntry, buildIndex, buildPluginRecord } from './meta.mjs'
+import { renderAdapterPage, renderCatalogueReadme, renderPluginPage } from './markdown.mjs'
+import { buildAuthors, buildEntry, buildIndex } from './meta.mjs'
 import { resolveLatestRelease } from './release.mjs'
 
-async function collectPrevious(metaDir) {
+async function collectPrevious(metaDir, exclude = new Set()) {
   const previousIds = new Set()
   const previousEntries = new Map()
   try {
     const entries = await readdir(metaDir, { withFileTypes: true })
     for (const entry of entries) {
-      if (!entry.isDirectory() || entry.name === '.git') continue
+      if (!entry.isDirectory() || entry.name === '.git' || exclude.has(entry.name)) continue
       previousIds.add(entry.name)
       try {
         previousEntries.set(entry.name, await readJson(path.join(metaDir, entry.name, 'all.json')))
@@ -26,20 +26,27 @@ async function collectPrevious(metaDir) {
   return { previousIds, previousEntries }
 }
 
-export async function runUpdate({
-  root,
-  registrations,
-  github,
-  maxReleases = 20,
-  now = () => new Date().toISOString(),
-  logger = console,
-}) {
-  const metaDir = path.join(root, 'meta')
-  const catalogueDir = path.join(root, 'catalogue')
-  const { previousIds, previousEntries } = await collectPrevious(metaDir)
-  const entries = []
-  const reports = []
+function recordFile(kind) {
+  return kind === 'adapter' ? 'adapter.json' : 'plugin.json'
+}
 
+function previousRecord(kind, previous) {
+  if (previous.record) return previous.record
+  return kind === 'adapter' ? previous.adapter : previous.plugin
+}
+
+async function updateKind({
+  kind,
+  registrations,
+  metaDir,
+  previous,
+  github,
+  maxReleases,
+  now,
+  logger,
+  entries,
+  reports,
+}) {
   for (const registration of registrations) {
     const checkedAt = now()
     try {
@@ -49,19 +56,21 @@ export async function runUpdate({
         owner,
         repo,
         pluginId: registration.id,
+        kind,
         maxReleases,
       })
-      const entry = buildEntry(registration, resolved)
+      const entry = buildEntry(kind, registration, resolved)
       entries.push(entry)
       const report = {
         id: registration.id,
+        kind,
         ok: true,
         checked_at: checkedAt,
         latest_version: resolved.version,
       }
       reports.push(report)
 
-      await writeJson(path.join(metaDir, registration.id, 'plugin.json'), entry.plugin)
+      await writeJson(path.join(metaDir, registration.id, recordFile(kind)), entry.record)
       await writeJson(path.join(metaDir, registration.id, 'release.json'), entry.release)
       await writeJson(path.join(metaDir, registration.id, 'meta.json'), entry.meta)
       await writeJson(path.join(metaDir, registration.id, 'all.json'), entry.all)
@@ -70,6 +79,7 @@ export async function runUpdate({
     } catch (error) {
       const report = {
         id: registration.id,
+        kind,
         ok: false,
         checked_at: checkedAt,
         error: error.message,
@@ -77,13 +87,14 @@ export async function runUpdate({
       reports.push(report)
       await writeJson(path.join(metaDir, registration.id, 'update_report.json'), report)
 
-      const previous = previousEntries.get(registration.id)
-      if (previous) {
-        const plugin = buildPluginRecord(registration)
+      const cached = previous.previousEntries.get(registration.id)
+      if (cached) {
+        const record = previousRecord(kind, cached)
         const merged = {
-          plugin,
-          release: previous.release,
-          meta: previous.meta,
+          kind,
+          record,
+          release: cached.release,
+          meta: cached.meta,
         }
         entries.push({ ...merged, all: merged })
         logger.warn(`[warn] ${registration.id}: ${error.message}; keeping previous metadata`)
@@ -92,15 +103,66 @@ export async function runUpdate({
       }
     }
   }
+}
 
-  const currentIds = new Set(registrations.map((registration) => registration.id))
-  for (const id of previousIds) {
-    if (!currentIds.has(id)) {
+export async function runUpdate({
+  root,
+  registrations,
+  github,
+  maxReleases = 20,
+  now = () => new Date().toISOString(),
+  logger = console,
+}) {
+  const metaDir = path.join(root, 'meta')
+  const adapterMetaDir = path.join(metaDir, 'adapters')
+  const catalogueDir = path.join(root, 'catalogue')
+  const pluginPrevious = await collectPrevious(metaDir, new Set(['adapters']))
+  const adapterPrevious = await collectPrevious(adapterMetaDir)
+  const entries = []
+  const reports = []
+
+  await updateKind({
+    kind: 'plugin',
+    registrations: registrations.plugins,
+    metaDir,
+    previous: pluginPrevious,
+    github,
+    maxReleases,
+    now,
+    logger,
+    entries,
+    reports,
+  })
+  await updateKind({
+    kind: 'adapter',
+    registrations: registrations.adapters,
+    metaDir: adapterMetaDir,
+    previous: adapterPrevious,
+    github,
+    maxReleases,
+    now,
+    logger,
+    entries,
+    reports,
+  })
+
+  const pluginIds = new Set(registrations.plugins.map((registration) => registration.id))
+  for (const id of pluginPrevious.previousIds) {
+    if (!pluginIds.has(id)) {
       await removeDir(path.join(metaDir, id))
     }
   }
+  const adapterIds = new Set(registrations.adapters.map((registration) => registration.id))
+  for (const id of adapterPrevious.previousIds) {
+    if (!adapterIds.has(id)) {
+      await removeDir(path.join(adapterMetaDir, id))
+    }
+  }
+  if (registrations.adapters.length === 0) {
+    await removeDir(adapterMetaDir)
+  }
 
-  entries.sort((a, b) => a.plugin.id.localeCompare(b.plugin.id))
+  entries.sort((a, b) => a.kind.localeCompare(b.kind) || a.record.id.localeCompare(b.record.id))
   const generatedAt = now()
 
   await writeJson(path.join(metaDir, 'index.json'), buildIndex(entries, { generatedAt }))
@@ -114,14 +176,18 @@ export async function runUpdate({
       '',
       '- `index.json`：聚合索引，宿主和工具优先读取此文件。',
       '- `authors.json`：作者聚合。',
-      '- `<id>/`：单个插件的 `plugin.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
+      '- `<id>/`：插件的 `plugin.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
+      '- `adapters/<id>/`：适配器的 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
     ].join('\n'),
   )
 
   await removeDir(catalogueDir)
   await writeText(path.join(catalogueDir, 'README.md'), renderCatalogueReadme(entries, { generatedAt }))
   for (const entry of entries) {
-    await writeText(path.join(catalogueDir, `${entry.plugin.id}.md`), renderPluginPage(entry))
+    const page =
+      entry.kind === 'adapter' ? `adapters/${entry.record.id}.md` : `${entry.record.id}.md`
+    const render = entry.kind === 'adapter' ? renderAdapterPage : renderPluginPage
+    await writeText(path.join(catalogueDir, page), render(entry))
   }
 
   return {

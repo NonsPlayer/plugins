@@ -113,3 +113,82 @@ test('throws when no valid release exists', async () => {
     /no valid release/,
   )
 })
+
+test('resolves an adapter release from its manifest version and descriptor', async () => {
+  const adapterManifest = {
+    version: '1.0.0',
+    resourceProvider: {
+      id: 'demo-adapter',
+      displayName: 'Demo Adapter',
+      contractVersion: 1,
+      platforms: ['netease'],
+    },
+    permissions: { httpHosts: ['example.org'], websocketHosts: [] },
+  }
+  const bytes = zipSync({ 'manifest.json': strToU8(JSON.stringify(adapterManifest)) })
+  const asset = {
+    id: 3,
+    name: 'demo-adapter-1.0.0.zip',
+    size: bytes.length,
+    browser_download_url: 'https://example.com/demo-adapter-1.0.0.zip',
+    download_count: 0,
+    created_at: '2026-01-01T00:00:00Z',
+  }
+  const github = {
+    async listReleases() {
+      return [makeRelease(asset, { tag_name: 'v1.0.0' })]
+    },
+    async download() {
+      return bytes
+    },
+  }
+  const resolved = await resolveLatestRelease({
+    github,
+    owner: 'owner',
+    repo: 'adapter',
+    pluginId: 'demo-adapter',
+    kind: 'adapter',
+  })
+  assert.equal(resolved.version, '1.0.0')
+  assert.equal(resolved.summary.name, 'Demo Adapter')
+  assert.deepEqual(resolved.summary.platforms, ['netease'])
+})
+
+test('rejects an adapter whose tag and manifest version differ', async () => {
+  const adapterManifest = {
+    version: '1.0.0',
+    resourceProvider: {
+      id: 'demo-adapter',
+      displayName: 'Demo Adapter',
+      contractVersion: 1,
+      platforms: ['netease'],
+    },
+    permissions: { httpHosts: [] },
+  }
+  const bytes = zipSync({ 'manifest.json': strToU8(JSON.stringify(adapterManifest)) })
+  const asset = {
+    id: 4,
+    name: 'demo-adapter-1.1.0.zip',
+    size: bytes.length,
+    browser_download_url: 'https://example.com/demo-adapter-1.1.0.zip',
+  }
+  const github = {
+    async listReleases() {
+      return [makeRelease(asset, { tag_name: 'v1.1.0' })]
+    },
+    async download() {
+      return bytes
+    },
+  }
+  await assert.rejects(
+    () =>
+      resolveLatestRelease({
+        github,
+        owner: 'owner',
+        repo: 'adapter',
+        pluginId: 'demo-adapter',
+        kind: 'adapter',
+      }),
+    /does not match manifest version/,
+  )
+})

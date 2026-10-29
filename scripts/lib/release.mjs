@@ -1,9 +1,19 @@
 import { createHash } from 'node:crypto'
 import semver from 'semver'
-import { manifestSummary, validateManifest } from './manifest.mjs'
+import {
+  adapterSummary,
+  manifestSummary,
+  validateAdapterManifest,
+  validateManifest,
+} from './manifest.mjs'
 import { readManifestFromZip } from './zip.mjs'
 
 export const MAX_ASSET_BYTES = 64 * 1024 * 1024
+
+const KINDS = {
+  plugin: { validate: validateManifest, summarize: manifestSummary },
+  adapter: { validate: validateAdapterManifest, summarize: adapterSummary },
+}
 
 export function parseTagVersion(tag, pluginId) {
   if (typeof tag !== 'string') return null
@@ -42,7 +52,16 @@ function releaseHistoryEntry(candidate) {
   }
 }
 
-export async function resolveLatestRelease({ github, owner, repo, pluginId, maxReleases = 20 }) {
+export async function resolveLatestRelease({
+  github,
+  owner,
+  repo,
+  pluginId,
+  kind = 'plugin',
+  maxReleases = 20,
+}) {
+  const spec = KINDS[kind]
+  if (!spec) throw new Error(`unknown package kind: ${kind}`)
   const releases = await github.listReleases(owner, repo)
   const candidates = []
 
@@ -67,7 +86,7 @@ export async function resolveLatestRelease({ github, owner, repo, pluginId, maxR
         throw new Error(`asset size mismatch: expected ${candidate.asset.size}, got ${bytes.length}`)
       }
       const manifest = readManifestFromZip(bytes)
-      const errors = validateManifest(manifest, pluginId)
+      const errors = spec.validate(manifest, pluginId)
       if (errors.length > 0) {
         throw new Error(errors.join('; '))
       }
@@ -79,7 +98,7 @@ export async function resolveLatestRelease({ github, owner, repo, pluginId, maxR
         version: candidate.version,
         asset: candidate.asset,
         manifest,
-        summary: manifestSummary(manifest),
+        summary: spec.summarize(manifest),
         sha256: hash(bytes, 'sha256'),
         md5: hash(bytes, 'md5'),
         history,

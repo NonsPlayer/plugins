@@ -37,7 +37,7 @@
 
 - 目录脚本使用 Node.js ESM（`.mjs`）与 pnpm；依赖声明在 `package.json`。
 - `meta/`、`catalogue/` 是生成分支的工作目录，已被 `.gitignore` 忽略，不提交到 `main`。
-- 第三方插件注册放在 `plugins/<id>/plugin_info.json`；官方插件源码放在 `official/<id>/`。
+- 插件注册放在 `plugins/<id>/plugin_info.json`，适配器注册放在 `adapters/<id>/adapter_info.json`；源码和构建产物留在各作者仓库。
 - 目录数据由定时任务从作者仓库的最新 Release 生成；不要在 `meta/` 或 `catalogue/` 手工修改。
 
 ## 提交约定

@@ -15,7 +15,7 @@ if (!token) {
   process.exit(1)
 }
 
-const registrations = await loadAllRegistrations(root, config)
+const registrations = await loadAllRegistrations(root)
 const { entries, failed } = await runUpdate({
   root,
   registrations,
@@ -23,8 +23,9 @@ const { entries, failed } = await runUpdate({
   maxReleases: config.update?.maxReleases ?? 20,
 })
 
-if (entries.length === 0 && registrations.length > 0) {
-  console.error('[error] no plugin entry could be generated')
+const total = registrations.plugins.length + registrations.adapters.length
+if (entries.length === 0 && total > 0) {
+  console.error('[error] no entry could be generated')
   process.exit(1)
 }
 console.log(`Generated ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}; ${failed} failure(s).`)

@@ -1,0 +1,16 @@
+{
+  "id": "ncm-converter",
+  "repository": "https://github.com/Miaoyww/ncm-converter",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "NonsPlayer",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "GPL-3.0-only",
+  "labels": ["tool"],
+  "introduction": {
+    "zh-CN": "introduction-zh_cn.md"
+  }
+}

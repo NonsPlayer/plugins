@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { formatAjvErrors, loadPluginInfoValidator } from '../scripts/lib/schema.mjs'
+import { formatAjvErrors, loadRegistrationValidator } from '../scripts/lib/schema.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const validator = await loadPluginInfoValidator(path.join(root, 'schemas/plugin_info.schema.json'))
+const validator = await loadRegistrationValidator(path.join(root, 'schemas/plugin_info.schema.json'))
 
 const valid = {
   id: 'demo-plugin',
@@ -53,4 +53,10 @@ test('rejects an unsafe related_path', () => {
 
 test('rejects a license outside the whitelist', () => {
   assert.equal(validator({ ...valid, license: 'WTFPL' }), false)
+})
+
+test('accepts the same shape for adapter registrations', async () => {
+  const adapter = await loadRegistrationValidator(path.join(root, 'schemas/adapter_info.schema.json'))
+  assert.equal(adapter(valid), true, formatAjvErrors(adapter.errors))
+  assert.equal(adapter({ ...valid, extra: true }), false)
 })

@@ -1,6 +1,7 @@
-export function buildPluginRecord(registration) {
+export function buildRecord(kind, registration) {
   return {
     schema_version: 1,
+    kind,
     id: registration.id,
     repository: registration.repository,
     branch: registration.branch,
@@ -12,12 +13,11 @@ export function buildPluginRecord(registration) {
     introduction: registration.introduction ?? {},
     deprecated: registration.deprecated ?? false,
     blocked: registration.blocked ?? false,
-    official: registration.official === true,
   }
 }
 
-export function buildEntry(registration, resolved) {
-  const plugin = buildPluginRecord(registration)
+export function buildEntry(kind, registration, resolved) {
+  const record = buildRecord(kind, registration)
   const meta = {
     schema_version: 1,
     ...resolved.summary,
@@ -50,60 +50,81 @@ export function buildEntry(registration, resolved) {
     ],
     history: resolved.history,
   }
-  return { plugin, release, meta, all: { plugin, release, meta } }
+  return { kind, record, release, meta, all: { record, release, meta } }
+}
+
+function indexEntry(entry) {
+  const asset = entry.release.releases[0].asset
+  const record = entry.record
+  const base = {
+    id: record.id,
+    kind: entry.kind,
+    name: entry.meta.name,
+    version: entry.meta.version,
+    description: entry.meta.description,
+    authors: record.authors,
+    license: record.license,
+    repository: record.repository,
+    labels: record.labels,
+    preview: record.preview,
+    deprecated: record.deprecated,
+    blocked: record.blocked,
+    unavailable: false,
+    artifact: {
+      url: asset.browser_download_url,
+      size: asset.size,
+      sha256: asset.hash_sha256,
+      md5: asset.hash_md5,
+    },
+    release: {
+      tag: entry.release.releases[0].tag_name,
+      created_at: entry.release.releases[0].created_at,
+    },
+  }
+  if (entry.kind === 'adapter') {
+    return {
+      ...base,
+      contractVersion: entry.meta.contractVersion,
+      platforms: entry.meta.platforms ?? [],
+      searchPlatforms: entry.meta.searchPlatforms ?? [],
+      coverHosts: entry.meta.coverHosts ?? [],
+      permissions: entry.meta.permissions ?? {},
+    }
+  }
+  return {
+    ...base,
+    engines: entry.meta.engines,
+    permissions: entry.meta.permissions,
+    httpHosts: entry.meta.httpHosts ?? [],
+    fileRoots: entry.meta.fileRoots ?? [],
+  }
 }
 
 export function buildIndex(entries, { generatedAt = new Date().toISOString() } = {}) {
-  const sorted = [...entries].sort((a, b) => a.plugin.id.localeCompare(b.plugin.id))
+  const byKind = (kind) =>
+    entries
+      .filter((entry) => entry.kind === kind)
+      .sort((a, b) => a.record.id.localeCompare(b.record.id))
+      .map(indexEntry)
   return {
     schema_version: 1,
     generated_at: generatedAt,
-    plugins: sorted.map(({ plugin, release, meta }) => {
-      const asset = release.releases[0].asset
-      return {
-        id: plugin.id,
-        name: meta.name,
-        version: meta.version,
-        description: meta.description,
-        authors: plugin.authors,
-        license: plugin.license,
-        repository: plugin.repository,
-        labels: plugin.labels,
-        preview: plugin.preview,
-        official: plugin.official,
-        deprecated: plugin.deprecated,
-        blocked: plugin.blocked,
-        unavailable: false,
-        engines: meta.engines,
-        permissions: meta.permissions,
-        httpHosts: meta.httpHosts ?? [],
-        fileRoots: meta.fileRoots ?? [],
-        artifact: {
-          url: asset.browser_download_url,
-          size: asset.size,
-          sha256: asset.hash_sha256,
-          md5: asset.hash_md5,
-        },
-        release: {
-          tag: release.releases[0].tag_name,
-          created_at: release.releases[0].created_at,
-        },
-      }
-    }),
+    plugins: byKind('plugin'),
+    adapters: byKind('adapter'),
   }
 }
 
 export function buildAuthors(entries) {
   const authors = new Map()
-  for (const { plugin } of entries) {
-    for (const author of plugin.authors) {
+  for (const entry of entries) {
+    for (const author of entry.record.authors) {
       const key = author.name
       if (!authors.has(key)) {
-        authors.set(key, { name: key, links: new Set(), plugins: new Set() })
+        authors.set(key, { name: key, links: new Set(), plugins: new Set(), adapters: new Set() })
       }
       const item = authors.get(key)
       if (author.link) item.links.add(author.link)
-      item.plugins.add(plugin.id)
+      item[entry.kind === 'adapter' ? 'adapters' : 'plugins'].add(entry.record.id)
     }
   }
   return Object.fromEntries(
@@ -115,6 +136,7 @@ export function buildAuthors(entries) {
           name: value.name,
           links: [...value.links].sort(),
           plugins: [...value.plugins].sort(),
+          adapters: [...value.adapters].sort(),
         },
       ]),
   )

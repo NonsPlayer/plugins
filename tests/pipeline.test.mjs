@@ -53,7 +53,6 @@ test('runs the registration-to-catalogue pipeline with a fake release', async ()
     authors: [{ name: 'Owner' }],
     license: 'MIT',
     labels: ['tool'],
-    official: false,
   }
 
   const resolved = await resolveLatestRelease({
@@ -62,7 +61,7 @@ test('runs the registration-to-catalogue pipeline with a fake release', async ()
     repo: 'repo',
     pluginId: 'demo-plugin',
   })
-  const entry = buildEntry(registration, resolved)
+  const entry = buildEntry('plugin', registration, resolved)
   const index = buildIndex([entry], { generatedAt: '2026-01-01T00:00:00Z' })
 
   assert.equal(index.plugins[0].id, 'demo-plugin')
