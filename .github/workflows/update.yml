@@ -1,0 +1,69 @@
+name: Update catalogue
+
+on:
+  schedule:
+    - cron: '15,45 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: catalogue-update
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Checkout previous metadata
+        uses: actions/checkout@v4
+        with:
+          ref: meta
+          path: meta
+        continue-on-error: true
+
+      - name: Remove nested git metadata
+        run: rm -rf meta/.git
+
+      - name: Update catalogue
+        run: pnpm catalogue:update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish meta branch
+        uses: s0/git-publish-subdir-action@ac113f6bfe8896e85a373534242c949a7ea74c98
+        env:
+          REPO: self
+          BRANCH: meta
+          FOLDER: meta
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SQUASH_HISTORY: true
+          MESSAGE: 'chore: update meta'
+
+      - name: Publish catalogue branch
+        uses: s0/git-publish-subdir-action@ac113f6bfe8896e85a373534242c949a7ea74c98
+        env:
+          REPO: self
+          BRANCH: catalogue
+          FOLDER: catalogue
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SQUASH_HISTORY: true
+          MESSAGE: 'chore: update catalogue'
