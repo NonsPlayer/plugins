@@ -167,6 +167,16 @@ export async function runUpdate({
     await removeDir(adapterMetaDir)
   }
 
+  const keptDirectories = new Set(['.git', 'plugins', 'adapters'])
+  for (const entry of await readdir(metaDir, { withFileTypes: true }).catch((error) => {
+    if (error.code === 'ENOENT') return []
+    throw error
+  })) {
+    if (entry.isDirectory() && !keptDirectories.has(entry.name)) {
+      await removeDir(path.join(metaDir, entry.name))
+    }
+  }
+
   entries.sort((a, b) => a.kind.localeCompare(b.kind) || a.record.id.localeCompare(b.record.id))
   const generatedAt = now()
 

@@ -284,3 +284,45 @@ test('preserves both kinds on failure and removes metadata when registrations ar
   assert.deepEqual(emptyIndex.plugins, [])
   assert.deepEqual(emptyIndex.adapters, [])
 })
+
+test('removes legacy root entries without using them as fallback metadata', async (t) => {
+  for (const fail of [false, true]) {
+    await t.test(fail ? 'failed release fetch' : 'successful release fetch', async (t) => {
+      const root = await tempRoot(t)
+      const metaDir = path.join(root, 'meta')
+      const args = {
+        root,
+        registrations: { plugins: [registration], adapters: [adapterRegistration] },
+        logger: { log() {}, warn() {}, error() {} },
+      }
+      await runUpdate({ ...args, github: fakeGitHub() })
+      const old = buildEntry('plugin', registration, fakeResolved('0.1.0'))
+      for (const id of ['demo-plugin', 'removed-plugin']) {
+        await mkdir(path.join(metaDir, id), { recursive: true })
+        await writeFile(path.join(metaDir, id, 'all.json'), JSON.stringify(old.all))
+      }
+      await mkdir(path.join(metaDir, '.git'), { recursive: true })
+      await writeFile(path.join(metaDir, '.git', 'HEAD'), 'preserve')
+
+      const result = await runUpdate({ ...args, github: fakeGitHub({ fail }) })
+      assert.equal(result.failed, fail ? 2 : 0)
+      assert.deepEqual((await readdir(metaDir)).sort(), [
+        '.git', 'README.md', 'adapters', 'authors.json', 'index.json', 'plugins',
+      ])
+      assert.equal(await readFile(path.join(metaDir, '.git', 'HEAD'), 'utf8'), 'preserve')
+      const index = JSON.parse(await readFile(path.join(metaDir, 'index.json'), 'utf8'))
+      assert.equal(index.plugins[0].version, '1.2.3')
+      assert.equal(index.adapters[0].version, '1.0.0')
+
+      await mkdir(path.join(metaDir, 'removed-plugin'), { recursive: true })
+      await runUpdate({
+        ...args,
+        registrations: { plugins: [], adapters: [] },
+        github: fakeGitHub(),
+      })
+      assert.deepEqual((await readdir(metaDir)).sort(), [
+        '.git', 'README.md', 'authors.json', 'index.json',
+      ])
+    })
+  }
+})
