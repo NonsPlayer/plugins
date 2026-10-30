@@ -2,6 +2,7 @@ export function buildRecord(kind, registration) {
   return {
     schema_version: 1,
     kind,
+    ...(kind === 'adapter' ? { distribution: registration.distribution ?? 'component' } : {}),
     id: registration.id,
     repository: registration.repository,
     branch: registration.branch,
@@ -82,8 +83,20 @@ function indexEntry(entry) {
     },
   }
   if (entry.kind === 'adapter') {
+    if (record.distribution === 'source') {
+      const { artifact, ...source } = base
+      return {
+        ...source,
+        distribution: 'source',
+        installable: false,
+        artifact: null,
+        sourceArtifact: artifact,
+      }
+    }
     return {
       ...base,
+      distribution: 'component',
+      installable: true,
       contractVersion: entry.meta.contractVersion,
       platforms: entry.meta.platforms ?? [],
       searchPlatforms: entry.meta.searchPlatforms ?? [],

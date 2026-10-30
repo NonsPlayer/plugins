@@ -4,7 +4,7 @@ NonsPlayer 的插件与音乐适配器目录。仓库保存注册信息和自动
 
 ## 工作方式
 
-- 作者在自己的仓库发布 GitHub Release：插件资产是 ZIP，根目录包含 `manifest.json`；适配器资产是 ZIP，根目录包含带 `version`、`descriptor` 或 `resourceProvider`、`permissions` 的 `manifest.json`。
+- 作者在自己的仓库发布 GitHub Release：插件资产是 ZIP，根目录包含 `manifest.json`；Component 适配器资产是 ZIP，根目录包含带 `version`、`descriptor` 或 `resourceProvider`、`permissions` 的 `manifest.json`。原生源码条目的 ZIP 则使用带 `version` 和 `source` 的源码 manifest。
 - 作者提一次 PR，添加 `plugins/<id>/plugin_info.json` 或 `adapters/<id>/adapter_info.json`。合并后发版不需要再提交 PR。
 - 定时任务每 30 分钟拉取最新 Release，读取 manifest，校验 id、版本与 tag 一致，计算 MD5/SHA-256。
 - 生成物发布到 `meta` 和 `catalogue` 分支：
@@ -39,6 +39,7 @@ scripts/                            # 校验、抓取、生成
 - 在 Actions 中手动触发 `Update catalogue` 可立即刷新。
 - 下架或标记弃用：在注册文件中设置 `deprecated` 或 `blocked`，不要删除条目。
 - `unavailable` 由更新脚本在抓取失败时自动写入 `update_report.json`。
+- 原生适配器源码条目使用 `distribution: "source"`，索引的 `installable` 为 `false`、`artifact` 为 `null`，源码下载位于 `sourceArtifact`，需要重新构建宿主。
 
 ## 本地开发
 

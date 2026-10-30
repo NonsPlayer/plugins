@@ -184,3 +184,41 @@ export function adapterSummary(manifest) {
     },
   }
 }
+
+export function validateSourceManifest(manifest, expectedId) {
+  if (!isPlainObject(manifest)) return ['manifest must be a JSON object']
+  const errors = []
+  if (typeof manifest.version !== 'string' || semver.valid(manifest.version) === null) {
+    errors.push('manifest.version must be a valid SemVer')
+  }
+  if (!isPlainObject(manifest.source)) return [...errors, 'manifest.source is required']
+  if (typeof manifest.source.id !== 'string' || !ID_PATTERN.test(manifest.source.id)) {
+    errors.push('source.id must match ^[a-z][a-z0-9-]{0,63}$')
+  } else if (expectedId && manifest.source.id !== expectedId) {
+    errors.push(`source id ${manifest.source.id} does not match registration id ${expectedId}`)
+  }
+  if (typeof manifest.source.name !== 'string' || !manifest.source.name.trim()) {
+    errors.push('source.name is required')
+  }
+  if (manifest.source.description !== undefined && (
+    typeof manifest.source.description !== 'string' ||
+    !manifest.source.description.trim() || manifest.source.description.length > 1024
+  )) {
+    errors.push('source.description must be a non-empty string of at most 1024 characters')
+  }
+  if (manifest.descriptor !== undefined || manifest.resourceProvider !== undefined) {
+    errors.push('source manifest must not declare descriptor or resourceProvider')
+  }
+  return errors
+}
+
+export function sourceSummary(manifest) {
+  return {
+    id: manifest.source.id,
+    name: manifest.source.name,
+    version: manifest.version,
+    description: manifest.source.description ?? null,
+    distribution: 'source',
+    installable: false,
+  }
+}

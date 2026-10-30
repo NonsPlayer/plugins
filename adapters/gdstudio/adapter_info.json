@@ -1,0 +1,7 @@
+{
+  "id": "gdstudio",
+  "repository": "https://github.com/Miaoyww/nons-adapter-gdstudio",
+  "branch": "main",
+  "authors": [{ "name": "Miaoyww", "link": "https://github.com/Miaoyww" }],
+  "license": "MIT"
+}

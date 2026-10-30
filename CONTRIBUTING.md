@@ -4,14 +4,14 @@
 
 ## 提交前确认
 
-- 插件或适配器已经打包成 ZIP，不是散落的源码目录。
+- 插件或适配器已经打包成 ZIP；原生源码条目包含实际源码与源码 manifest。
 - 插件或适配器适合公开使用，不是纯自用或明显重复的条目。
 - 你是条目的作者、维护者或协作者，或有书面授权。
 - 使用白名单内的开源许可证。
 
 ## 注册步骤
 
-1. 在仓库发布一个 GitHub Release。资产是 ZIP，根目录必须包含 `manifest.json`。
+1. 在仓库发布一个 GitHub Release。资产是 ZIP，根目录必须包含 `manifest.json`；Component 与源码条目使用各自的 manifest 契约。
 2. 在本仓库新增注册文件：
    - 插件：`plugins/<id>/plugin_info.json`
    - 适配器：`adapters/<id>/adapter_info.json`
@@ -41,7 +41,7 @@
 
 ## 注册字段
 
-插件使用 `plugin_info.json`，适配器使用 `adapter_info.json`，两者字段相同：
+插件使用 `plugin_info.json`，适配器使用 `adapter_info.json`，共用以下字段：
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
@@ -56,6 +56,8 @@
 | `introduction` | 否 | 语言标签到 Markdown 文件路径的映射，文件放在注册目录内 |
 | `deprecated` | 否 | 维护者标记弃用 |
 | `blocked` | 否 | 维护者标记封禁 |
+
+适配器另支持 `distribution`：默认为 `component`，仅源码条目填写 `source`。
 
 版本、名称、描述、权限、兼容范围和哈希由脚本从 Release 资产里的 `manifest.json` 自动提取，不要写进注册文件。
 
@@ -90,6 +92,23 @@
 - `displayName` 非空；`contractVersion` 为正整数；`permissions` 为对象。
 - 资产内包含适配器 WASM Component（`adapter.component.wasm`）。
 - 适配器当前仍需由宿主随包或后续安装能力加载；目录只发布元数据与产物链接。
+
+### 原生源码条目
+
+注册文件填写 `"distribution": "source"`。Release 使用源码 ZIP，根目录包含以下 `manifest.json`，版本必须与 tag 一致，并包含实际源码：
+
+```json
+{
+  "version": "1.0.0",
+  "source": {
+    "id": "example-native",
+    "name": "原生适配器",
+    "description": "随宿主编译链接的 Rust 库"
+  }
+}
+```
+
+源码 manifest 不声明 `descriptor` 或 `resourceProvider`。索引标记 `distribution: "source"`、`installable: false`、`artifact: null`，源码链接和哈希位于 `sourceArtifact`。此类条目需要重新构建宿主，安装器必须排除。
 
 ## 许可证白名单
 

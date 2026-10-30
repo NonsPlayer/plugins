@@ -7,6 +7,7 @@ function escapeCell(value) {
 function status(record) {
   if (record.blocked) return '已封禁'
   if (record.deprecated) return '已弃用'
+  if (record.distribution === 'source') return '仅源码，不可安装'
   return '可用'
 }
 
@@ -105,9 +106,9 @@ function renderIntroductions(record, lines) {
   lines.push('')
 }
 
-function renderDownload(release, lines) {
+function renderDownload(release, lines, heading = '下载') {
   const asset = release.releases[0].asset
-  lines.push('## 下载', '')
+  lines.push(`## ${heading}`, '')
   lines.push(`- [${asset.name}](${asset.browser_download_url})`)
   lines.push(`- 大小：${asset.size ?? '未知'} 字节`)
   lines.push(`- SHA-256：\`${asset.hash_sha256}\``)
@@ -140,6 +141,13 @@ export function renderPluginPage(entry) {
 export function renderAdapterPage(entry) {
   const { record, meta, release } = entry
   const lines = renderCommonHeader(record, meta)
+
+  if (record.distribution === 'source') {
+    lines.push('这是随宿主编译链接的源码条目，需要重新构建应用，不能通过适配器安装器安装。', '')
+    renderIntroductions(record, lines)
+    renderDownload(release, lines, '源码下载')
+    return lines.join('\n')
+  }
 
   lines.push('## 支持平台', '')
   lines.push(meta.platforms.length > 0 ? meta.platforms.map((platform) => `- \`${platform}\``).join('\n') : '无', '')

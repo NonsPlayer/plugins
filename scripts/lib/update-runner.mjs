@@ -57,6 +57,7 @@ async function updateKind({
         repo,
         pluginId: registration.id,
         kind,
+        distribution: registration.distribution,
         maxReleases,
       })
       const entry = buildEntry(kind, registration, resolved)

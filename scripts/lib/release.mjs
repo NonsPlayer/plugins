@@ -3,8 +3,10 @@ import semver from 'semver'
 import {
   adapterSummary,
   manifestSummary,
+  sourceSummary,
   validateAdapterManifest,
   validateManifest,
+  validateSourceManifest,
 } from './manifest.mjs'
 import { readManifestFromZip } from './zip.mjs'
 
@@ -58,9 +60,15 @@ export async function resolveLatestRelease({
   repo,
   pluginId,
   kind = 'plugin',
+  distribution = 'component',
   maxReleases = 20,
 }) {
-  const spec = KINDS[kind]
+  if (!['component', 'source'].includes(distribution) || (kind !== 'adapter' && distribution === 'source')) {
+    throw new Error(`unsupported distribution: ${kind}/${distribution}`)
+  }
+  const spec = kind === 'adapter' && distribution === 'source'
+    ? { validate: validateSourceManifest, summarize: sourceSummary }
+    : KINDS[kind]
   if (!spec) throw new Error(`unknown package kind: ${kind}`)
   const releases = await github.listReleases(owner, repo)
   const candidates = []

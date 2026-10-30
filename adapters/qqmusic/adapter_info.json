@@ -1,0 +1,7 @@
+{
+  "id": "qqmusic",
+  "repository": "https://github.com/Miaoyww/nons-adapter-qqmusic",
+  "branch": "main",
+  "authors": [{ "name": "Miaoyww", "link": "https://github.com/Miaoyww" }],
+  "license": "MIT"
+}

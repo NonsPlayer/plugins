@@ -65,6 +65,9 @@ export function publicRegistration(registration) {
       result[key] = registration[key]
     }
   }
+  if (registration.kind === 'adapter' && registration.distribution !== undefined) {
+    result.distribution = registration.distribution
+  }
   return result
 }
 

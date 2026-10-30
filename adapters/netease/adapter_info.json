@@ -1,0 +1,8 @@
+{
+  "id": "netease",
+  "repository": "https://github.com/Miaoyww/nons-adapter-netease",
+  "branch": "main",
+  "authors": [{ "name": "Miaoyww", "link": "https://github.com/Miaoyww" }],
+  "license": "MIT",
+  "distribution": "source"
+}

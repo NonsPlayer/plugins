@@ -69,6 +69,7 @@ for (const registration of registrations) {
           repo,
           pluginId: registration.id,
           kind: registration.kind,
+          distribution: registration.distribution,
           maxReleases: config.update?.maxReleases ?? 20,
         })
         console.log(`[ok] ${registration.id}: ${resolved.version} ${resolved.release.tag_name}`)
