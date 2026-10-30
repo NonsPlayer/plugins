@@ -6,13 +6,13 @@ import { renderAdapterPage, renderCatalogueReadme, renderPluginPage } from './ma
 import { buildAuthors, buildEntry, buildIndex } from './meta.mjs'
 import { resolveLatestRelease } from './release.mjs'
 
-async function collectPrevious(metaDir, exclude = new Set()) {
+async function collectPrevious(metaDir) {
   const previousIds = new Set()
   const previousEntries = new Map()
   try {
     const entries = await readdir(metaDir, { withFileTypes: true })
     for (const entry of entries) {
-      if (!entry.isDirectory() || entry.name === '.git' || exclude.has(entry.name)) continue
+      if (!entry.isDirectory() || entry.name === '.git') continue
       previousIds.add(entry.name)
       try {
         previousEntries.set(entry.name, await readJson(path.join(metaDir, entry.name, 'all.json')))
@@ -115,9 +115,10 @@ export async function runUpdate({
   logger = console,
 }) {
   const metaDir = path.join(root, 'meta')
+  const pluginMetaDir = path.join(metaDir, 'plugins')
   const adapterMetaDir = path.join(metaDir, 'adapters')
   const catalogueDir = path.join(root, 'catalogue')
-  const pluginPrevious = await collectPrevious(metaDir, new Set(['adapters']))
+  const pluginPrevious = await collectPrevious(pluginMetaDir)
   const adapterPrevious = await collectPrevious(adapterMetaDir)
   const entries = []
   const reports = []
@@ -125,7 +126,7 @@ export async function runUpdate({
   await updateKind({
     kind: 'plugin',
     registrations: registrations.plugins,
-    metaDir,
+    metaDir: pluginMetaDir,
     previous: pluginPrevious,
     github,
     maxReleases,
@@ -150,8 +151,11 @@ export async function runUpdate({
   const pluginIds = new Set(registrations.plugins.map((registration) => registration.id))
   for (const id of pluginPrevious.previousIds) {
     if (!pluginIds.has(id)) {
-      await removeDir(path.join(metaDir, id))
+      await removeDir(path.join(pluginMetaDir, id))
     }
+  }
+  if (registrations.plugins.length === 0) {
+    await removeDir(pluginMetaDir)
   }
   const adapterIds = new Set(registrations.adapters.map((registration) => registration.id))
   for (const id of adapterPrevious.previousIds) {
@@ -177,7 +181,7 @@ export async function runUpdate({
       '',
       '- `index.json`：聚合索引，宿主和工具优先读取此文件。',
       '- `authors.json`：作者聚合。',
-      '- `<id>/`：插件的 `plugin.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
+      '- `plugins/<id>/`：插件的 `plugin.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
       '- `adapters/<id>/`：适配器的 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。',
     ].join('\n'),
   )

@@ -9,7 +9,7 @@ NonsPlayer 的插件与音乐适配器目录。仓库保存注册信息和自动
 - 定时任务每 30 分钟拉取最新 Release，读取 manifest，校验 id、版本与 tag 一致，计算 MD5/SHA-256。
 - 生成物发布到 `meta` 和 `catalogue` 分支：
   - `meta/index.json`：聚合索引，`plugins` 与 `adapters` 两个数组，宿主和工具优先读取。
-  - `meta/<id>/`：单个插件；`meta/adapters/<id>/`：单个适配器。各自包含 `plugin.json` 或 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。
+  - `meta/plugins/<id>/`：单个插件；`meta/adapters/<id>/`：单个适配器。各自包含 `plugin.json` 或 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。
   - `catalogue/`：可浏览的 Markdown 目录，适配器页面位于 `catalogue/adapters/`。
 
 ## 目录结构
@@ -55,7 +55,7 @@ pnpm catalogue:check --offline
 
 ```text
 https://raw.githubusercontent.com/NonsPlayer/plugins/meta/index.json
-https://raw.githubusercontent.com/NonsPlayer/plugins/meta/<id>/all.json
+https://raw.githubusercontent.com/NonsPlayer/plugins/meta/plugins/<id>/all.json
 https://raw.githubusercontent.com/NonsPlayer/plugins/meta/adapters/<id>/all.json
 ```
 

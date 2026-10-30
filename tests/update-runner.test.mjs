@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { access, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
@@ -169,7 +169,22 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
   assert.equal(index.adapters[0].id, 'demo-adapter')
   assert.deepEqual(index.adapters[0].platforms, ['netease'])
 
-  const all = JSON.parse(await readFile(path.join(root, 'meta', 'demo-plugin', 'all.json'), 'utf8'))
+  assert.deepEqual((await readdir(path.join(root, 'meta'))).sort(), [
+    'README.md', 'adapters', 'authors.json', 'index.json', 'plugins',
+  ])
+  for (const [kind, id, record] of [
+    ['plugins', 'demo-plugin', 'plugin.json'],
+    ['adapters', 'demo-adapter', 'adapter.json'],
+  ]) {
+    assert.deepEqual((await readdir(path.join(root, 'meta', kind, id))).sort(), [
+      'all.json', 'meta.json', record, 'release.json', 'update_report.json',
+    ].sort())
+  }
+  const metaReadme = await readFile(path.join(root, 'meta', 'README.md'), 'utf8')
+  assert.match(metaReadme, /`plugins\/<id>\/`/)
+  assert.match(metaReadme, /`adapters\/<id>\/`/)
+
+  const all = JSON.parse(await readFile(path.join(root, 'meta', 'plugins', 'demo-plugin', 'all.json'), 'utf8'))
   assert.equal(all.release.latest_version, '1.2.3')
   const adapterAll = JSON.parse(
     await readFile(path.join(root, 'meta', 'adapters', 'demo-adapter', 'all.json'), 'utf8'),
@@ -187,10 +202,10 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
 test('keeps previous metadata on failure and removes stale entries', async (t) => {
   const root = await tempRoot(t)
   const previous = buildEntry('plugin', registration, fakeResolved('1.0.0'))
-  await mkdir(path.join(root, 'meta', 'demo-plugin'), { recursive: true })
-  await writeFile(path.join(root, 'meta', 'demo-plugin', 'all.json'), JSON.stringify(previous.all))
-  await mkdir(path.join(root, 'meta', 'old-plugin'), { recursive: true })
-  await writeFile(path.join(root, 'meta', 'old-plugin', 'all.json'), JSON.stringify(previous.all))
+  await mkdir(path.join(root, 'meta', 'plugins', 'demo-plugin'), { recursive: true })
+  await writeFile(path.join(root, 'meta', 'plugins', 'demo-plugin', 'all.json'), JSON.stringify(previous.all))
+  await mkdir(path.join(root, 'meta', 'plugins', 'old-plugin'), { recursive: true })
+  await writeFile(path.join(root, 'meta', 'plugins', 'old-plugin', 'all.json'), JSON.stringify(previous.all))
 
   const result = await runUpdate({
     root,
@@ -204,9 +219,43 @@ test('keeps previous metadata on failure and removes stale entries', async (t) =
   const index = JSON.parse(await readFile(path.join(root, 'meta', 'index.json'), 'utf8'))
   assert.equal(index.plugins[0].version, '1.0.0')
 
-  const report = JSON.parse(await readFile(path.join(root, 'meta', 'demo-plugin', 'update_report.json'), 'utf8'))
+  const report = JSON.parse(await readFile(path.join(root, 'meta', 'plugins', 'demo-plugin', 'update_report.json'), 'utf8'))
   assert.equal(report.ok, false)
   assert.match(report.error, /network down/)
 
-  await assert.rejects(access(path.join(root, 'meta', 'old-plugin')))
+  await assert.rejects(access(path.join(root, 'meta', 'plugins', 'old-plugin')), { code: 'ENOENT' })
+})
+
+test('preserves both kinds on failure and removes metadata when registrations are removed', async (t) => {
+  const root = await tempRoot(t)
+  const args = {
+    root,
+    registrations: { plugins: [registration], adapters: [adapterRegistration] },
+    logger: { log() {}, warn() {}, error() {} },
+  }
+  await runUpdate({ ...args, github: fakeGitHub() })
+  const result = await runUpdate({ ...args, github: fakeGitHub({ fail: true }) })
+  assert.equal(result.failed, 2)
+  const index = JSON.parse(await readFile(path.join(root, 'meta', 'index.json'), 'utf8'))
+  assert.equal(index.plugins[0].version, '1.2.3')
+  assert.equal(index.adapters[0].version, '1.0.0')
+  for (const [kind, id] of [['plugins', 'demo-plugin'], ['adapters', 'demo-adapter']]) {
+    const entryDir = path.join(root, 'meta', kind, id)
+    const all = JSON.parse(await readFile(path.join(entryDir, 'all.json'), 'utf8'))
+    assert.equal(all.record.id, id)
+    const report = JSON.parse(await readFile(path.join(entryDir, 'update_report.json'), 'utf8'))
+    assert.equal(report.ok, false)
+  }
+
+  await runUpdate({
+    ...args,
+    registrations: { plugins: [], adapters: [] },
+    github: fakeGitHub(),
+  })
+  assert.deepEqual((await readdir(path.join(root, 'meta'))).sort(), [
+    'README.md', 'authors.json', 'index.json',
+  ])
+  const emptyIndex = JSON.parse(await readFile(path.join(root, 'meta', 'index.json'), 'utf8'))
+  assert.deepEqual(emptyIndex.plugins, [])
+  assert.deepEqual(emptyIndex.adapters, [])
 })
