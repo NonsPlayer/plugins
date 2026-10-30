@@ -58,6 +58,15 @@ jobs:
           SQUASH_HISTORY: true
           MESSAGE: 'chore: update meta'
 
+      - name: Sync meta to Cloudflare R2
+        run: aws s3 sync meta "s3://${R2_BUCKET}" --endpoint-url "${R2_ENDPOINT}" --region auto --delete --only-show-errors
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: 'true'
+          R2_BUCKET: nons-plugin
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+
       - name: Publish catalogue branch
         uses: s0/git-publish-subdir-action@ac113f6bfe8896e85a373534242c949a7ea74c98
         env:

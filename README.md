@@ -58,6 +58,16 @@ https://raw.githubusercontent.com/NonsPlayer/plugins/meta/<id>/all.json
 https://raw.githubusercontent.com/NonsPlayer/plugins/meta/adapters/<id>/all.json
 ```
 
+`Update catalogue` 工作流还会在发布 `meta` 分支后，将同一份 `meta/` 内容同步到 Cloudflare R2 的 `nons-plugin` 桶。同步使用删除模式，桶内已经不在最新 `meta/` 中的对象会自动清理；`catalogue/` 不会上传。
+
+维护者需要在仓库的 GitHub Actions secrets 中配置：
+
+- `R2_ENDPOINT`：完整的 R2 S3 endpoint，例如 `https://<account-id>.r2.cloudflarestorage.com`。
+- `R2_ACCESS_KEY_ID`：R2 S3 API 令牌的访问密钥 ID。
+- `R2_SECRET_ACCESS_KEY`：R2 S3 API 令牌的机密访问密钥。
+
+公开下载还需要在 Cloudflare 中为该桶配置自定义域名或公开访问地址。公开域名不写入工作流，避免在域名尚未确定时形成错误的客户端地址。
+
 ## 许可证
 
 本仓库使用 GPL-3.0-only。第三方插件与适配器保留自己的许可证，但必须在白名单内。
