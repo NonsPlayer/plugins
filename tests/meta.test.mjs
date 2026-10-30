@@ -14,6 +14,7 @@ const registration = {
 function resolved(version = '1.2.3') {
   return {
     version,
+    totalDownloadCount: 42,
     release: {
       html_url: `https://github.com/owner/repo/releases/tag/v${version}`,
       name: '',
@@ -91,6 +92,9 @@ test('builds plugin, release and meta records', () => {
   assert.equal(entry.release.latest_version, '1.2.3')
   assert.equal(entry.release.releases[0].asset.hash_sha256, 'a'.repeat(64))
   assert.equal(entry.meta.name, 'Demo')
+  assert.equal(entry.meta.total_download_count, 42)
+  assert.equal(entry.all.meta.total_download_count, 42)
+  assert.equal(entry.release.releases[0].asset.download_count, 3)
 })
 
 test('builds an aggregate index for plugins and adapters', () => {
@@ -102,10 +106,12 @@ test('builds an aggregate index for plugins and adapters', () => {
   assert.equal(index.plugins[0].artifact.sha256, 'a'.repeat(64))
   assert.equal(index.plugins[0].permissions[0], 'ui')
   assert.equal(index.plugins[0].unavailable, false)
+  assert.equal(index.plugins[0].total_download_count, 42)
   assert.equal(index.adapters.length, 1)
   assert.deepEqual(index.adapters[0].platforms, ['netease'])
   assert.equal(index.adapters[0].contractVersion, 1)
   assert.equal(index.adapters[0].permissions.httpHosts[0], 'example.org')
+  assert.equal(index.adapters[0].total_download_count, 42)
 })
 
 test('aggregates authors per kind', () => {
@@ -117,4 +123,11 @@ test('aggregates authors per kind', () => {
   assert.deepEqual(authors.Owner.plugins, ['demo-plugin'])
   assert.deepEqual(authors.Owner.adapters, ['demo-adapter'])
   assert.deepEqual(authors.Owner.links, ['https://github.com/owner'])
+})
+
+test('does not report an unknown total from old cached metadata as zero', () => {
+  const entry = buildEntry('plugin', registration, resolved())
+  delete entry.meta.total_download_count
+  const index = JSON.parse(JSON.stringify(buildIndex([entry])))
+  assert.equal(Object.hasOwn(index.plugins[0], 'total_download_count'), false)
 })

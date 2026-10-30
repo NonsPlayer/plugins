@@ -32,7 +32,7 @@ function githubFor(value = manifest) {
       return [{
         tag_name: 'v1.0.0',
         html_url: 'https://github.com/owner/native-adapter/releases/tag/v1.0.0',
-        assets: [{ name: 'native-adapter-1.0.0.zip', size: bytes.length, browser_download_url: 'https://example.org/source.zip' }],
+        assets: [{ name: 'native-adapter-1.0.0.zip', size: bytes.length, browser_download_url: 'https://example.org/source.zip', download_count: 13 }],
       }]
     },
     async download() { return bytes },
@@ -59,6 +59,8 @@ test('source releases cannot be interpreted as installable components', async ()
   assert.equal(index.artifact, null)
   assert.equal(index.sourceArtifact.sha256, resolved.sha256)
   assert.equal(index.contractVersion, undefined)
+  assert.equal(index.total_download_count, 13)
+  assert.equal(entry.meta.total_download_count, 13)
   await assert.rejects(resolve(githubFor(), 'component'), /no valid release/)
   assert.match(renderAdapterPage(entry), /源码下载/)
   assert.match(renderCatalogueReadme([entry], { generatedAt: '2026-10-30' }), /不可安装/)
@@ -89,9 +91,11 @@ test('update pipeline writes and preserves non-installable source metadata on fa
   const index = JSON.parse(await readFile(file, 'utf8'))
   assert.equal(index.adapters[0].installable, false)
   assert.equal(index.adapters[0].sourceArtifact.url, 'https://example.org/source.zip')
+  assert.equal(index.adapters[0].total_download_count, 13)
   const failed = await runUpdate({ ...args, github: { async listReleases() { throw new Error('offline') } } })
   assert.equal(failed.failed, 1)
   assert.equal(JSON.parse(await readFile(file, 'utf8')).adapters[0].artifact, null)
+  assert.equal(JSON.parse(await readFile(file, 'utf8')).adapters[0].total_download_count, 13)
   const page = await readFile(path.join(root, 'catalogue', 'adapters', 'native-adapter.md'), 'utf8')
   assert.match(page, /不可安装/)
 })

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- 插件与适配器的聚合索引和条目元数据新增 `total_download_count`，累计所有符合规则的正式 Release 所选 ZIP 的下载次数，不受版本检查数量限制。
+
 - 插件元数据统一生成到 `meta` 分支的 `plugins/<id>/`，与 `adapters/<id>/` 按类型分目录。
 
 - 收录 GD音乐台、QQ音乐、小白音乐适配器，以及不可安装的网易云音乐原生源码条目；项目许可证为 MIT。

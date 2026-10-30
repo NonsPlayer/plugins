@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import test from 'node:test'
 import { strToU8, zipSync } from 'fflate'
-import { parseTagVersion, pickAsset, resolveLatestRelease } from '../scripts/lib/release.mjs'
+import { MAX_ASSET_BYTES, parseTagVersion, pickAsset, resolveLatestRelease } from '../scripts/lib/release.mjs'
 
 const manifest = {
   id: 'demo-plugin',
@@ -76,11 +76,51 @@ test('resolves the latest valid release and hashes the asset', async () => {
   assert.equal(resolved.summary.id, 'demo-plugin')
   assert.equal(resolved.sha256, createHash('sha256').update(bytes).digest('hex'))
   assert.equal(resolved.md5, createHash('md5').update(bytes).digest('hex'))
+  assert.equal(resolved.totalDownloadCount, 0)
+})
+
+test('totals all eligible release assets beyond the candidate limit without downloading history', async () => {
+  const { bytes, asset } = makeAsset({ download_count: 7 })
+  const downloads = []
+  const older = Array.from({ length: 25 }, (_, index) => makeRelease(
+    { ...asset, download_count: 2 },
+    { tag_name: `v1.0.${index}` },
+  ))
+  const github = {
+    async listReleases() {
+      return [
+        ...older,
+        makeRelease(asset, { assets: [
+          { ...asset, name: 'other.zip', download_count: 1000 },
+          asset,
+          { ...asset, name: 'demo-plugin-debug.zip', download_count: 1000 },
+        ] }),
+        makeRelease({ ...asset, download_count: undefined }, { tag_name: 'v0.9.0' }),
+        makeRelease({ ...asset, download_count: null }, { tag_name: 'v0.8.0' }),
+        makeRelease(asset, { draft: true }),
+        makeRelease(asset, { prerelease: true }),
+        makeRelease(asset, { tag_name: 'invalid' }),
+        makeRelease({ ...asset, name: 'notes.txt' }),
+        makeRelease({ ...asset, size: MAX_ASSET_BYTES + 1 }),
+        makeRelease(asset, { assets: [] }),
+      ]
+    },
+    async download(url) {
+      downloads.push(url)
+      return bytes
+    },
+  }
+  const resolved = await resolveLatestRelease({
+    github, owner: 'owner', repo: 'repo', pluginId: 'demo-plugin', maxReleases: 1,
+  })
+  assert.equal(resolved.totalDownloadCount, 57)
+  assert.equal(resolved.history.length, 1)
+  assert.deepEqual(downloads, [asset.browser_download_url])
 })
 
 test('skips a broken release and uses the previous one', async () => {
-  const { bytes, asset } = makeAsset()
-  const broken = makeAsset({ name: 'demo-plugin-1.3.0.zip' })
+  const { bytes, asset } = makeAsset({ download_count: 5 })
+  const broken = makeAsset({ name: 'demo-plugin-1.3.0.zip', download_count: 11 })
   const brokenBytes = zipSync({ 'manifest.json': strToU8(JSON.stringify({ ...manifest, version: '9.9.9' })) })
   const releases = [
     makeRelease({ ...broken.asset, id: 2 }, { tag_name: 'v1.3.0' }),
@@ -96,6 +136,8 @@ test('skips a broken release and uses the previous one', async () => {
   }
   const resolved = await resolveLatestRelease({ github, owner: 'owner', repo: 'repo', pluginId: 'demo-plugin' })
   assert.equal(resolved.version, '1.2.3')
+  assert.equal(resolved.asset.download_count, 5)
+  assert.equal(resolved.totalDownloadCount, 16)
 })
 
 test('throws when no valid release exists', async () => {

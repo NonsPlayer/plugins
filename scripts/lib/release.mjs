@@ -72,6 +72,7 @@ export async function resolveLatestRelease({
   if (!spec) throw new Error(`unknown package kind: ${kind}`)
   const releases = await github.listReleases(owner, repo)
   const candidates = []
+  let totalDownloadCount = 0
 
   for (const release of releases) {
     if (release.draft || release.prerelease) continue
@@ -80,6 +81,7 @@ export async function resolveLatestRelease({
     const asset = pickAsset(release, pluginId)
     if (!asset) continue
     candidates.push({ release, version, asset })
+    totalDownloadCount += asset.download_count ?? 0
   }
 
   candidates.sort((a, b) => semver.rcompare(a.version, b.version))
@@ -105,6 +107,7 @@ export async function resolveLatestRelease({
         release: candidate.release,
         version: candidate.version,
         asset: candidate.asset,
+        totalDownloadCount,
         manifest,
         summary: spec.summarize(manifest),
         sha256: hash(bytes, 'sha256'),

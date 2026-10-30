@@ -22,6 +22,7 @@ export function buildEntry(kind, registration, resolved) {
   const meta = {
     schema_version: 1,
     ...resolved.summary,
+    total_download_count: resolved.totalDownloadCount,
   }
   const release = {
     schema_version: 1,
@@ -62,6 +63,7 @@ function indexEntry(entry) {
     kind: entry.kind,
     name: entry.meta.name,
     version: entry.meta.version,
+    total_download_count: entry.meta.total_download_count,
     description: entry.meta.description,
     authors: record.authors,
     license: record.license,

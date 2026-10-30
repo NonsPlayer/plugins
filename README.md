@@ -61,6 +61,15 @@ https://raw.githubusercontent.com/NonsPlayer/plugins/meta/adapters/<id>/all.json
 
 `Update catalogue` 工作流还会在发布 `meta` 分支后，将同一份 `meta/` 内容同步到 Cloudflare R2 的 `nons-plugin` 桶。同步使用删除模式，桶内已经不在最新 `meta/` 中的对象会自动清理；`catalogue/` 不会上传。
 
+`index.json` 的插件与适配器条目，以及各条目的 `meta.json` 和 `all.json` 中的 `meta`，提供 `total_download_count`，表示历史 Release 的累计资产下载次数：
+
+- 汇总所有符合现有 tag 与 ZIP 选择规则的正式 Release，每个 Release 只计入选中的一个 ZIP，不受 `maxReleases` 限制。
+- 排除草稿、预发布、无效 tag 和没有适用 ZIP 的 Release；资产计数缺失时按 `0` 计算。
+- 直接读取 GitHub API 的 `download_count`，不逐个下载校验历史包，因此包校验失败的候选仍计入。Release 资产被删除或替换后，累计值可能下降；该值不是安装人数。
+- 每次成功更新都会刷新计数；更新失败时保留上次成功的值。旧缓存尚无累计字段时，该字段保持缺失，直到一次成功更新。
+
+单个所选资产的下载次数仍位于 `release.json` 的 `releases[0].asset.download_count`，以及 `all.json` 中的相同 Release 结构。
+
 维护者需要在仓库的 GitHub Actions secrets 中配置：
 
 - `R2_ENDPOINT`：完整的 R2 S3 endpoint，例如 `https://<account-id>.r2.cloudflarestorage.com`。
