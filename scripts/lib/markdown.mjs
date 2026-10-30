@@ -51,7 +51,7 @@ export function renderCatalogueReadme(entries, { generatedAt }) {
     lines.push('| 插件 | 版本 | 描述 | 作者 | 许可证 | 状态 |', '| --- | --- | --- | --- | --- | --- |')
     for (const { record, meta } of plugins) {
       lines.push(
-        `| [${escapeCell(meta.name)}](./${record.id}.md) | ${escapeCell(meta.version)} | ${escapeCell(meta.description ?? '')} | ${escapeCell(authorText(record))} | ${escapeCell(record.license)} | ${status(record)} |`,
+        `| [${escapeCell(meta.name)}](./plugins/${record.id}.md) | ${escapeCell(meta.version)} | ${escapeCell(meta.description ?? '')} | ${escapeCell(authorText(record))} | ${escapeCell(record.license)} | ${status(record)} |`,
       )
     }
     lines.push('')

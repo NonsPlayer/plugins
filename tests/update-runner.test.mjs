@@ -157,6 +157,9 @@ async function tempRoot(t) {
 
 test('writes plugin and adapter metadata and catalogue output', async (t) => {
   const root = await tempRoot(t)
+  await mkdir(path.join(root, 'catalogue'), { recursive: true })
+  await writeFile(path.join(root, 'catalogue', 'demo-plugin.md'), 'old page')
+  await writeFile(path.join(root, 'catalogue', 'removed-plugin.md'), 'removed page')
   const result = await runUpdate({
     root,
     registrations: { plugins: [registration], adapters: [adapterRegistration] },
@@ -212,6 +215,12 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
   const readme = await readFile(path.join(root, 'catalogue', 'README.md'), 'utf8')
   assert.match(readme, /Demo/)
   assert.match(readme, /Demo Adapter/)
+  assert.deepEqual((await readdir(path.join(root, 'catalogue'))).sort(), [
+    'README.md', 'adapters', 'plugins',
+  ])
+  assert.match(readme, /\[Demo\]\(\.\/plugins\/demo-plugin\.md\)/)
+  const pluginPage = await readFile(path.join(root, 'catalogue', 'plugins', 'demo-plugin.md'), 'utf8')
+  assert.match(pluginPage, /# Demo/)
   const page = await readFile(path.join(root, 'catalogue', 'adapters', 'demo-adapter.md'), 'utf8')
   assert.match(page, /契约版本/)
 })
@@ -263,6 +272,10 @@ test('preserves both kinds on failure and removes metadata when registrations ar
   assert.equal(index.adapters[0].version, '1.0.0')
   assert.equal(index.plugins[0].total_download_count, 30)
   assert.equal(index.adapters[0].total_download_count, 30)
+  assert.deepEqual((await readdir(path.join(root, 'catalogue'))).sort(), [
+    'README.md', 'adapters', 'plugins',
+  ])
+  assert.match(await readFile(path.join(root, 'catalogue', 'plugins', 'demo-plugin.md'), 'utf8'), /# Demo/)
   for (const [kind, id] of [['plugins', 'demo-plugin'], ['adapters', 'demo-adapter']]) {
     const entryDir = path.join(root, 'meta', kind, id)
     const all = JSON.parse(await readFile(path.join(entryDir, 'all.json'), 'utf8'))
@@ -283,6 +296,7 @@ test('preserves both kinds on failure and removes metadata when registrations ar
   const emptyIndex = JSON.parse(await readFile(path.join(root, 'meta', 'index.json'), 'utf8'))
   assert.deepEqual(emptyIndex.plugins, [])
   assert.deepEqual(emptyIndex.adapters, [])
+  assert.deepEqual(await readdir(path.join(root, 'catalogue')), ['README.md'])
 })
 
 test('removes legacy root entries without using them as fallback metadata', async (t) => {

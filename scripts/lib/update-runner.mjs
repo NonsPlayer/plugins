@@ -200,7 +200,7 @@ export async function runUpdate({
   await writeText(path.join(catalogueDir, 'README.md'), renderCatalogueReadme(entries, { generatedAt }))
   for (const entry of entries) {
     const page =
-      entry.kind === 'adapter' ? `adapters/${entry.record.id}.md` : `${entry.record.id}.md`
+      entry.kind === 'adapter' ? `adapters/${entry.record.id}.md` : `plugins/${entry.record.id}.md`
     const render = entry.kind === 'adapter' ? renderAdapterPage : renderPluginPage
     await writeText(path.join(catalogueDir, page), render(entry))
   }

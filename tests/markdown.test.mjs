@@ -69,7 +69,7 @@ test('renders the catalogue tables', () => {
     generatedAt: '2026-01-01T00:00:00Z',
   })
   assert.match(markdown, /NonsPlayer 插件目录/)
-  assert.match(markdown, /\[Demo\]\(\.\/demo-plugin\.md\)/)
+  assert.match(markdown, /\[Demo\]\(\.\/plugins\/demo-plugin\.md\)/)
   assert.match(markdown, /\[Demo Adapter\]\(\.\/adapters\/demo-adapter\.md\)/)
   assert.match(markdown, /可用/)
 })

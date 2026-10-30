@@ -10,7 +10,7 @@ NonsPlayer 的插件与音乐适配器目录。仓库保存注册信息和自动
 - 生成物发布到 `meta` 和 `catalogue` 分支：
   - `meta/index.json`：聚合索引，`plugins` 与 `adapters` 两个数组，宿主和工具优先读取。
   - `meta/plugins/<id>/`：单个插件；`meta/adapters/<id>/`：单个适配器。各自包含 `plugin.json` 或 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。
-  - `catalogue/`：可浏览的 Markdown 目录，适配器页面位于 `catalogue/adapters/`。
+  - `catalogue/`：可浏览的 Markdown 目录，插件页面位于 `catalogue/plugins/<id>.md`，适配器页面位于 `catalogue/adapters/<id>.md`。
 
 ## 目录结构
 
