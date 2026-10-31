@@ -1,0 +1,16 @@
+{
+  "id": "netease-island",
+  "repository": "https://github.com/Miaoyww/netease-island",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "NonsPlayer",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "GPL-3.0-only",
+  "labels": ["tool", "netease"],
+  "introduction": {
+    "zh-CN": "introduction-zh_cn.md"
+  }
+}
