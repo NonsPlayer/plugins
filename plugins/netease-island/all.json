@@ -1,0 +1,123 @@
+{
+  "record": {
+    "schema_version": 1,
+    "kind": "plugin",
+    "id": "netease-island",
+    "repository": "https://github.com/Miaoyww/netease-island",
+    "branch": "main",
+    "authors": [
+      {
+        "name": "NonsPlayer",
+        "link": "https://github.com/Miaoyww"
+      }
+    ],
+    "license": "GPL-3.0-only",
+    "related_path": ".",
+    "labels": [
+      "tool",
+      "netease"
+    ],
+    "preview": null,
+    "introduction": {
+      "zh-CN": "introduction-zh_cn.md"
+    },
+    "deprecated": false,
+    "blocked": false
+  },
+  "release": {
+    "schema_version": 1,
+    "id": "netease-island",
+    "latest_version": "1.3.0",
+    "latest_version_index": 0,
+    "releases": [
+      {
+        "url": "https://github.com/Miaoyww/netease-island/releases/tag/v1.3.0",
+        "name": "灵动岛 1.3.0",
+        "tag_name": "v1.3.0",
+        "created_at": "2026-10-31T11:45:25Z",
+        "description": "# 灵动岛 1.3.0\n\n识别剪贴板中的网易云歌曲链接与官方短链，显示歌曲预览，支持立即播放、下一首播放、收藏及艺术家跳转。\n\n在 NonsPlayer 设置 → 插件中安装 `netease-island-1.3.0.zip` 并确认权限。配置支持分享识别、预览时长和悬停保持；兼容插件 API / UI API 2.x。\n\n源码独立维护，沿用灵动岛 1.3.0 版本。安装包通过公开 `@nonsplayer/plugin-sdk` 构建，已通过 React 界面测试、Rust 链接解析测试及 Manifest/产物校验。真实系统剪贴板、账号收藏与播放仍需实机验收。\r\n",
+        "prerelease": false,
+        "asset": {
+          "id": 695240978,
+          "name": "netease-island-1.3.0.zip",
+          "size": 411344,
+          "download_count": 10,
+          "created_at": "2026-10-31T11:46:56Z",
+          "browser_download_url": "https://github.com/Miaoyww/netease-island/releases/download/v1.3.0/netease-island-1.3.0.zip",
+          "hash_md5": "03a74f54a2b466985ee8dea4c2cb2b43",
+          "hash_sha256": "092882b1b45590a371675f5d6d8098dfb54f8c7d2eab94ab6316aee2e2d97beb"
+        },
+        "meta": {
+          "schema_version": 1,
+          "id": "netease-island",
+          "name": "灵动岛",
+          "version": "1.3.0",
+          "description": "识别剪贴板中的网易云音乐链接，在灵动岛中查看歌曲并快速播放。",
+          "permissions": [
+            "clipboard:read",
+            "http:request",
+            "music:metadata",
+            "player:control",
+            "ui",
+            "config"
+          ],
+          "httpHosts": [
+            "music.163.com",
+            "y.music.163.com",
+            "m.music.163.com",
+            "163cn.tv"
+          ],
+          "fileRoots": null,
+          "engines": {
+            "app": "^1.0.0",
+            "pluginApi": "^2.0.0",
+            "uiApi": "^2.0.0"
+          },
+          "backend": "backend.wasm",
+          "frontend": "ui.mjs",
+          "total_download_count": 10
+        }
+      }
+    ],
+    "history": [
+      {
+        "version": "1.3.0",
+        "tag_name": "v1.3.0",
+        "url": "https://github.com/Miaoyww/netease-island/releases/tag/v1.3.0",
+        "asset_url": "https://github.com/Miaoyww/netease-island/releases/download/v1.3.0/netease-island-1.3.0.zip",
+        "size": 411344,
+        "created_at": "2026-10-31T11:45:25Z"
+      }
+    ]
+  },
+  "meta": {
+    "schema_version": 1,
+    "id": "netease-island",
+    "name": "灵动岛",
+    "version": "1.3.0",
+    "description": "识别剪贴板中的网易云音乐链接，在灵动岛中查看歌曲并快速播放。",
+    "permissions": [
+      "clipboard:read",
+      "http:request",
+      "music:metadata",
+      "player:control",
+      "ui",
+      "config"
+    ],
+    "httpHosts": [
+      "music.163.com",
+      "y.music.163.com",
+      "m.music.163.com",
+      "163cn.tv"
+    ],
+    "fileRoots": null,
+    "engines": {
+      "app": "^1.0.0",
+      "pluginApi": "^2.0.0",
+      "uiApi": "^2.0.0"
+    },
+    "backend": "backend.wasm",
+    "frontend": "ui.mjs",
+    "total_download_count": 10
+  }
+}

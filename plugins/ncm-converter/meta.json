@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "ncm-converter",
+  "name": "NCM 格式转换",
+  "version": "1.0.3",
+  "description": "批量将本地 NCM 恢复为 MP3 或 FLAC，保留歌曲信息，默认保存到原文件目录。",
+  "permissions": [
+    "ui",
+    "files:selected"
+  ],
+  "httpHosts": null,
+  "fileRoots": [
+    "*"
+  ],
+  "engines": {
+    "app": "^1.0.0",
+    "pluginApi": "^2.0.0",
+    "uiApi": "^2.0.0"
+  },
+  "backend": null,
+  "frontend": "ui.mjs",
+  "total_download_count": 40
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "plugin",
+  "id": "netease-island",
+  "repository": "https://github.com/Miaoyww/netease-island",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "NonsPlayer",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "GPL-3.0-only",
+  "related_path": ".",
+  "labels": [
+    "tool",
+    "netease"
+  ],
+  "preview": null,
+  "introduction": {
+    "zh-CN": "introduction-zh_cn.md"
+  },
+  "deprecated": false,
+  "blocked": false
+}

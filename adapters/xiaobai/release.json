@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "xiaobai",
+  "latest_version": "0.1.0",
+  "latest_version_index": 0,
+  "releases": [
+    {
+      "url": "https://github.com/Miaoyww/nons-adapter-xiaobai/releases/tag/v0.1.0",
+      "name": "v0.1.0",
+      "tag_name": "v0.1.0",
+      "created_at": "2026-10-30T11:35:33Z",
+      "description": "**Full Changelog**: https://github.com/Miaoyww/nons-adapter-xiaobai/commits/v0.1.0",
+      "prerelease": false,
+      "asset": {
+        "id": 691939455,
+        "name": "xiaobai-v0.1.0.zip",
+        "size": 302134,
+        "download_count": 31,
+        "created_at": "2026-10-30T11:41:35Z",
+        "browser_download_url": "https://github.com/Miaoyww/nons-adapter-xiaobai/releases/download/v0.1.0/xiaobai-v0.1.0.zip",
+        "hash_md5": "6d2d6fb2090524f6f2bcf481583ea8d5",
+        "hash_sha256": "28b02bcde7f2529d9fbd3260ec6b16fee37384966daa59124c70b5a16b900222"
+      },
+      "meta": {
+        "schema_version": 1,
+        "id": "xiaobai",
+        "name": "小白音乐",
+        "version": "0.1.0",
+        "description": "按网易云、QQ音乐、酷狗和酷我的歌曲 ID 提供备用音源，不参与搜索；可用性取决于上游与歌曲。",
+        "contractVersion": 1,
+        "platforms": [
+          "netease",
+          "qqmusic",
+          "kugou",
+          "kuwo"
+        ],
+        "searchPlatforms": [],
+        "coverHosts": [],
+        "permissions": {
+          "httpHosts": [
+            "music.90svip.cn",
+            "*.music.126.net",
+            "*.music.163.com",
+            "*.tc.qq.com",
+            "*.stream.qqmusic.qq.com",
+            "*.kugou.com",
+            "*.kugou.net",
+            "*.kuwo.cn"
+          ],
+          "websocketHosts": [],
+          "system": false,
+          "state": false,
+          "credentials": false
+        },
+        "total_download_count": 31
+      }
+    }
+  ],
+  "history": [
+    {
+      "version": "0.1.0",
+      "tag_name": "v0.1.0",
+      "url": "https://github.com/Miaoyww/nons-adapter-xiaobai/releases/tag/v0.1.0",
+      "asset_url": "https://github.com/Miaoyww/nons-adapter-xiaobai/releases/download/v0.1.0/xiaobai-v0.1.0.zip",
+      "size": 302134,
+      "created_at": "2026-10-30T11:35:33Z"
+    }
+  ]
+}

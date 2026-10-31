@@ -1,0 +1,423 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-31T16:06:27.914Z",
+  "plugins": [
+    {
+      "id": "dont-play-that-song",
+      "kind": "plugin",
+      "name": "千万不要放那首歌",
+      "version": "1.0.0",
+      "total_download_count": 7,
+      "description": "人, 你可以播放Shed A Light(bushi)",
+      "authors": [
+        {
+          "name": "Miaoyww",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "GPL-3.0-only",
+      "repository": "https://github.com/Miaoyww/dont-play-that-song",
+      "labels": [
+        "play"
+      ],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/dont-play-that-song/releases/download/v1.0.0/dont-play-that-song-1.0.0.zip",
+        "size": 4856628,
+        "sha256": "df710be538bccf1a1c33de761a30c96fac05dbe6e8bfe39f8a0c8a17628657e5",
+        "md5": "ef4689799347e6ed305e59c52d7c75ee"
+      },
+      "release": {
+        "tag": "v1.0.0",
+        "created_at": "2026-10-31T16:05:25Z"
+      },
+      "engines": {
+        "app": "^1.0.0",
+        "pluginApi": "^2.0.0",
+        "uiApi": "^2.0.0"
+      },
+      "permissions": [
+        "player:read",
+        "ui",
+        "window:manage"
+      ],
+      "httpHosts": [],
+      "fileRoots": []
+    },
+    {
+      "id": "ncm-converter",
+      "kind": "plugin",
+      "name": "NCM 格式转换",
+      "version": "1.0.3",
+      "total_download_count": 40,
+      "description": "批量将本地 NCM 恢复为 MP3 或 FLAC，保留歌曲信息，默认保存到原文件目录。",
+      "authors": [
+        {
+          "name": "NonsPlayer",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "GPL-3.0-only",
+      "repository": "https://github.com/Miaoyww/ncm-converter",
+      "labels": [
+        "tool"
+      ],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.3/ncm-converter-1.0.3.zip",
+        "size": 2811,
+        "sha256": "8c6543848eeb9bda373fc42ea2338d63dac1ef91b325391613121f97a71dd7bb",
+        "md5": "ea91184932980b7420ed87c3501c4bb9"
+      },
+      "release": {
+        "tag": "v1.0.3",
+        "created_at": "2026-10-30T08:26:08Z"
+      },
+      "engines": {
+        "app": "^1.0.0",
+        "pluginApi": "^2.0.0",
+        "uiApi": "^2.0.0"
+      },
+      "permissions": [
+        "ui",
+        "files:selected"
+      ],
+      "httpHosts": [],
+      "fileRoots": [
+        "*"
+      ]
+    },
+    {
+      "id": "netease-download",
+      "kind": "plugin",
+      "name": "网易云下载",
+      "version": "1.1.1",
+      "total_download_count": 38,
+      "description": "下载网易云歌曲到本地，管理下载队列、音质与保存目录。",
+      "authors": [
+        {
+          "name": "NonsPlayer",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "GPL-3.0-only",
+      "repository": "https://github.com/Miaoyww/netease-download",
+      "labels": [
+        "download"
+      ],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/netease-download/releases/download/v1.1.1/netease-download-1.1.1.zip",
+        "size": 14301,
+        "sha256": "72ee7e9a9825147cb76673b40a96e5d2a303be890ee99fea08394011367a1465",
+        "md5": "21fb3ed720a3c365750a2a42494c587d"
+      },
+      "release": {
+        "tag": "v1.1.1",
+        "created_at": "2026-10-30T08:28:41Z"
+      },
+      "engines": {
+        "app": "^1.0.0",
+        "pluginApi": "^2.0.0",
+        "uiApi": "^2.0.0"
+      },
+      "permissions": [
+        "ui",
+        "config",
+        "storage",
+        "account:credentials",
+        "player:control",
+        "http:request",
+        "http:transfer",
+        "files:selected"
+      ],
+      "httpHosts": [
+        "*"
+      ],
+      "fileRoots": []
+    },
+    {
+      "id": "netease-island",
+      "kind": "plugin",
+      "name": "灵动岛",
+      "version": "1.3.0",
+      "total_download_count": 10,
+      "description": "识别剪贴板中的网易云音乐链接，在灵动岛中查看歌曲并快速播放。",
+      "authors": [
+        {
+          "name": "NonsPlayer",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "GPL-3.0-only",
+      "repository": "https://github.com/Miaoyww/netease-island",
+      "labels": [
+        "tool",
+        "netease"
+      ],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/netease-island/releases/download/v1.3.0/netease-island-1.3.0.zip",
+        "size": 411344,
+        "sha256": "092882b1b45590a371675f5d6d8098dfb54f8c7d2eab94ab6316aee2e2d97beb",
+        "md5": "03a74f54a2b466985ee8dea4c2cb2b43"
+      },
+      "release": {
+        "tag": "v1.3.0",
+        "created_at": "2026-10-31T11:45:25Z"
+      },
+      "engines": {
+        "app": "^1.0.0",
+        "pluginApi": "^2.0.0",
+        "uiApi": "^2.0.0"
+      },
+      "permissions": [
+        "clipboard:read",
+        "http:request",
+        "music:metadata",
+        "player:control",
+        "ui",
+        "config"
+      ],
+      "httpHosts": [
+        "music.163.com",
+        "y.music.163.com",
+        "m.music.163.com",
+        "163cn.tv"
+      ],
+      "fileRoots": []
+    }
+  ],
+  "adapters": [
+    {
+      "id": "gdstudio",
+      "kind": "adapter",
+      "name": "GD音乐台",
+      "version": "0.1.0",
+      "total_download_count": 34,
+      "description": "按已有歌曲 ID 提供十个平台的替换音源，不参与搜索；可用性取决于上游，不使用平台账号凭据。",
+      "authors": [
+        {
+          "name": "Miaoyww",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/Miaoyww/nons-adapter-gdstudio",
+      "labels": [],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/nons-adapter-gdstudio/releases/download/v0.1.0/gdstudio-v0.1.0.zip",
+        "size": 5342918,
+        "sha256": "c3a57b47bc79a2d922d3649d207230622f280d3d70d52b8c44bd20843ec50567",
+        "md5": "bdea36a011a50893c16a4fa528bf51db"
+      },
+      "release": {
+        "tag": "v0.1.0",
+        "created_at": "2026-10-30T11:32:37Z"
+      },
+      "distribution": "component",
+      "installable": true,
+      "contractVersion": 1,
+      "platforms": [
+        "netease",
+        "joox",
+        "kuwo",
+        "tidal",
+        "qobuz",
+        "applemusic",
+        "bilibili",
+        "ytmusic",
+        "embeat",
+        "qqmusic"
+      ],
+      "searchPlatforms": [],
+      "coverHosts": [],
+      "permissions": {
+        "httpHosts": [
+          "music.gdstudio.xyz",
+          "music.gdstudio.org",
+          "music-proxy.gdstudio.org",
+          "*.music.126.net",
+          "*.music.163.com",
+          "*.music.joox.com",
+          "*.kuwo.cn",
+          "*.tc.qq.com",
+          "api.bilibili.com"
+        ],
+        "websocketHosts": [],
+        "system": true,
+        "state": false,
+        "credentials": false
+      }
+    },
+    {
+      "id": "netease",
+      "kind": "adapter",
+      "name": "网易云音乐",
+      "version": "1.0.0",
+      "total_download_count": 25,
+      "description": "随宿主编译链接的原生 Rust 适配器库，需要重新构建应用，不支持运行时安装。",
+      "authors": [
+        {
+          "name": "Miaoyww",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/Miaoyww/nons-adapter-netease",
+      "labels": [],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "release": {
+        "tag": "v1.0.0",
+        "created_at": "2026-10-30T11:32:40Z"
+      },
+      "distribution": "source",
+      "installable": false,
+      "artifact": null,
+      "sourceArtifact": {
+        "url": "https://github.com/Miaoyww/nons-adapter-netease/releases/download/v1.0.0/netease-v1.0.0.zip",
+        "size": 296631,
+        "sha256": "e9d6c84dd08bcbf687d307b883efdf6ad36c779d2eb0f91363283d510de1456e",
+        "md5": "855e4da057cb56f20acb8ea25dfc69f2"
+      }
+    },
+    {
+      "id": "qqmusic",
+      "kind": "adapter",
+      "name": "QQ 音乐",
+      "version": "0.1.1",
+      "total_download_count": 37,
+      "description": null,
+      "authors": [
+        {
+          "name": "Miaoyww",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/Miaoyww/nons-adapter-qqmusic",
+      "labels": [],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/download/v0.1.1/qqmusic-v0.1.1.zip",
+        "size": 324861,
+        "sha256": "cd5830d32ef724228ee570839cba2aa77d1344c1dd7d3cb62f2d8d8d3fe071e4",
+        "md5": "428371f2f5ac08f3ba7303fe29be3a3d"
+      },
+      "release": {
+        "tag": "v0.1.1",
+        "created_at": "2026-10-30T11:32:44Z"
+      },
+      "distribution": "component",
+      "installable": true,
+      "contractVersion": 1,
+      "platforms": [
+        "qqmusic"
+      ],
+      "searchPlatforms": [],
+      "coverHosts": [
+        "y.gtimg.cn",
+        "*.qpic.cn",
+        "*.qlogo.cn",
+        "*.qq.com"
+      ],
+      "permissions": {
+        "httpHosts": [
+          "u.y.qq.com",
+          "c.y.qq.com",
+          "api.tencentmusic.com",
+          "open.weixin.qq.com",
+          "lp.open.weixin.qq.com",
+          "*.stream.qqmusic.qq.com",
+          "*.qqmusic.tc.qq.com"
+        ],
+        "websocketHosts": [
+          "mu.y.qq.com"
+        ],
+        "system": true,
+        "state": true,
+        "credentials": true
+      }
+    },
+    {
+      "id": "xiaobai",
+      "kind": "adapter",
+      "name": "小白音乐",
+      "version": "0.1.0",
+      "total_download_count": 31,
+      "description": "按网易云、QQ音乐、酷狗和酷我的歌曲 ID 提供备用音源，不参与搜索；可用性取决于上游与歌曲。",
+      "authors": [
+        {
+          "name": "Miaoyww",
+          "link": "https://github.com/Miaoyww"
+        }
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/Miaoyww/nons-adapter-xiaobai",
+      "labels": [],
+      "preview": null,
+      "deprecated": false,
+      "blocked": false,
+      "unavailable": false,
+      "artifact": {
+        "url": "https://github.com/Miaoyww/nons-adapter-xiaobai/releases/download/v0.1.0/xiaobai-v0.1.0.zip",
+        "size": 302134,
+        "sha256": "28b02bcde7f2529d9fbd3260ec6b16fee37384966daa59124c70b5a16b900222",
+        "md5": "6d2d6fb2090524f6f2bcf481583ea8d5"
+      },
+      "release": {
+        "tag": "v0.1.0",
+        "created_at": "2026-10-30T11:35:33Z"
+      },
+      "distribution": "component",
+      "installable": true,
+      "contractVersion": 1,
+      "platforms": [
+        "netease",
+        "qqmusic",
+        "kugou",
+        "kuwo"
+      ],
+      "searchPlatforms": [],
+      "coverHosts": [],
+      "permissions": {
+        "httpHosts": [
+          "music.90svip.cn",
+          "*.music.126.net",
+          "*.music.163.com",
+          "*.tc.qq.com",
+          "*.stream.qqmusic.qq.com",
+          "*.kugou.com",
+          "*.kugou.net",
+          "*.kuwo.cn"
+        ],
+        "websocketHosts": [],
+        "system": false,
+        "state": false,
+        "credentials": false
+      }
+    }
+  ]
+}

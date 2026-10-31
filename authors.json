@@ -1,0 +1,29 @@
+{
+  "Miaoyww": {
+    "name": "Miaoyww",
+    "links": [
+      "https://github.com/Miaoyww"
+    ],
+    "plugins": [
+      "dont-play-that-song"
+    ],
+    "adapters": [
+      "gdstudio",
+      "netease",
+      "qqmusic",
+      "xiaobai"
+    ]
+  },
+  "NonsPlayer": {
+    "name": "NonsPlayer",
+    "links": [
+      "https://github.com/Miaoyww"
+    ],
+    "plugins": [
+      "ncm-converter",
+      "netease-download",
+      "netease-island"
+    ],
+    "adapters": []
+  }
+}

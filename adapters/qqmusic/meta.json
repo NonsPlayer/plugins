@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "qqmusic",
+  "name": "QQ 音乐",
+  "version": "0.1.1",
+  "description": null,
+  "contractVersion": 1,
+  "platforms": [
+    "qqmusic"
+  ],
+  "searchPlatforms": [],
+  "coverHosts": [
+    "y.gtimg.cn",
+    "*.qpic.cn",
+    "*.qlogo.cn",
+    "*.qq.com"
+  ],
+  "permissions": {
+    "httpHosts": [
+      "u.y.qq.com",
+      "c.y.qq.com",
+      "api.tencentmusic.com",
+      "open.weixin.qq.com",
+      "lp.open.weixin.qq.com",
+      "*.stream.qqmusic.qq.com",
+      "*.qqmusic.tc.qq.com"
+    ],
+    "websocketHosts": [
+      "mu.y.qq.com"
+    ],
+    "system": true,
+    "state": true,
+    "credentials": true
+  },
+  "total_download_count": 37
+}

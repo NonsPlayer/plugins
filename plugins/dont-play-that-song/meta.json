@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "dont-play-that-song",
+  "name": "千万不要放那首歌",
+  "version": "1.0.0",
+  "description": "人, 你可以播放Shed A Light(bushi)",
+  "permissions": [
+    "player:read",
+    "ui",
+    "window:manage"
+  ],
+  "httpHosts": null,
+  "fileRoots": null,
+  "engines": {
+    "app": "^1.0.0",
+    "pluginApi": "^2.0.0",
+    "uiApi": "^2.0.0"
+  },
+  "backend": null,
+  "frontend": "ui.mjs",
+  "total_download_count": 7
+}

@@ -1,0 +1,116 @@
+{
+  "record": {
+    "schema_version": 1,
+    "kind": "plugin",
+    "id": "ncm-converter",
+    "repository": "https://github.com/Miaoyww/ncm-converter",
+    "branch": "main",
+    "authors": [
+      {
+        "name": "NonsPlayer",
+        "link": "https://github.com/Miaoyww"
+      }
+    ],
+    "license": "GPL-3.0-only",
+    "related_path": ".",
+    "labels": [
+      "tool"
+    ],
+    "preview": null,
+    "introduction": {
+      "zh-CN": "introduction-zh_cn.md"
+    },
+    "deprecated": false,
+    "blocked": false
+  },
+  "release": {
+    "schema_version": 1,
+    "id": "ncm-converter",
+    "latest_version": "1.0.3",
+    "latest_version_index": 0,
+    "releases": [
+      {
+        "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v1.0.3",
+        "name": "v1.0.3",
+        "tag_name": "v1.0.3",
+        "created_at": "2026-10-30T08:26:08Z",
+        "description": "**Full Changelog**: https://github.com/Miaoyww/ncm-converter/compare/v1.0.2...v1.0.3",
+        "prerelease": false,
+        "asset": {
+          "id": 691450845,
+          "name": "ncm-converter-1.0.3.zip",
+          "size": 2811,
+          "download_count": 32,
+          "created_at": "2026-10-30T08:27:02Z",
+          "browser_download_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.3/ncm-converter-1.0.3.zip",
+          "hash_md5": "ea91184932980b7420ed87c3501c4bb9",
+          "hash_sha256": "8c6543848eeb9bda373fc42ea2338d63dac1ef91b325391613121f97a71dd7bb"
+        },
+        "meta": {
+          "schema_version": 1,
+          "id": "ncm-converter",
+          "name": "NCM 格式转换",
+          "version": "1.0.3",
+          "description": "批量将本地 NCM 恢复为 MP3 或 FLAC，保留歌曲信息，默认保存到原文件目录。",
+          "permissions": [
+            "ui",
+            "files:selected"
+          ],
+          "httpHosts": null,
+          "fileRoots": [
+            "*"
+          ],
+          "engines": {
+            "app": "^1.0.0",
+            "pluginApi": "^2.0.0",
+            "uiApi": "^2.0.0"
+          },
+          "backend": null,
+          "frontend": "ui.mjs",
+          "total_download_count": 40
+        }
+      }
+    ],
+    "history": [
+      {
+        "version": "1.0.3",
+        "tag_name": "v1.0.3",
+        "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v1.0.3",
+        "asset_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.3/ncm-converter-1.0.3.zip",
+        "size": 2811,
+        "created_at": "2026-10-30T08:26:08Z"
+      },
+      {
+        "version": "1.0.0",
+        "tag_name": "v1.0.0",
+        "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v1.0.0",
+        "asset_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.0/ncm-converter-1.0.0.zip",
+        "size": 2809,
+        "created_at": "2026-10-29T06:37:18Z"
+      }
+    ]
+  },
+  "meta": {
+    "schema_version": 1,
+    "id": "ncm-converter",
+    "name": "NCM 格式转换",
+    "version": "1.0.3",
+    "description": "批量将本地 NCM 恢复为 MP3 或 FLAC，保留歌曲信息，默认保存到原文件目录。",
+    "permissions": [
+      "ui",
+      "files:selected"
+    ],
+    "httpHosts": null,
+    "fileRoots": [
+      "*"
+    ],
+    "engines": {
+      "app": "^1.0.0",
+      "pluginApi": "^2.0.0",
+      "uiApi": "^2.0.0"
+    },
+    "backend": null,
+    "frontend": "ui.mjs",
+    "total_download_count": 40
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "record": {
+    "schema_version": 1,
+    "kind": "adapter",
+    "distribution": "source",
+    "id": "netease",
+    "repository": "https://github.com/Miaoyww/nons-adapter-netease",
+    "branch": "main",
+    "authors": [
+      {
+        "name": "Miaoyww",
+        "link": "https://github.com/Miaoyww"
+      }
+    ],
+    "license": "MIT",
+    "related_path": ".",
+    "labels": [],
+    "preview": null,
+    "introduction": {},
+    "deprecated": false,
+    "blocked": false
+  },
+  "release": {
+    "schema_version": 1,
+    "id": "netease",
+    "latest_version": "1.0.0",
+    "latest_version_index": 0,
+    "releases": [
+      {
+        "url": "https://github.com/Miaoyww/nons-adapter-netease/releases/tag/v1.0.0",
+        "name": "v1.0.0",
+        "tag_name": "v1.0.0",
+        "created_at": "2026-10-30T11:32:40Z",
+        "description": "**Full Changelog**: https://github.com/Miaoyww/nons-adapter-netease/commits/v1.0.0",
+        "prerelease": false,
+        "asset": {
+          "id": 691929427,
+          "name": "netease-v1.0.0.zip",
+          "size": 296631,
+          "download_count": 25,
+          "created_at": "2026-10-30T11:37:26Z",
+          "browser_download_url": "https://github.com/Miaoyww/nons-adapter-netease/releases/download/v1.0.0/netease-v1.0.0.zip",
+          "hash_md5": "855e4da057cb56f20acb8ea25dfc69f2",
+          "hash_sha256": "e9d6c84dd08bcbf687d307b883efdf6ad36c779d2eb0f91363283d510de1456e"
+        },
+        "meta": {
+          "schema_version": 1,
+          "id": "netease",
+          "name": "网易云音乐",
+          "version": "1.0.0",
+          "description": "随宿主编译链接的原生 Rust 适配器库，需要重新构建应用，不支持运行时安装。",
+          "distribution": "source",
+          "installable": false,
+          "total_download_count": 25
+        }
+      }
+    ],
+    "history": [
+      {
+        "version": "1.0.0",
+        "tag_name": "v1.0.0",
+        "url": "https://github.com/Miaoyww/nons-adapter-netease/releases/tag/v1.0.0",
+        "asset_url": "https://github.com/Miaoyww/nons-adapter-netease/releases/download/v1.0.0/netease-v1.0.0.zip",
+        "size": 296631,
+        "created_at": "2026-10-30T11:32:40Z"
+      }
+    ]
+  },
+  "meta": {
+    "schema_version": 1,
+    "id": "netease",
+    "name": "网易云音乐",
+    "version": "1.0.0",
+    "description": "随宿主编译链接的原生 Rust 适配器库，需要重新构建应用，不支持运行时安装。",
+    "distribution": "source",
+    "installable": false,
+    "total_download_count": 25
+  }
+}

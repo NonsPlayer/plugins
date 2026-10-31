@@ -1,0 +1,114 @@
+{
+  "record": {
+    "schema_version": 1,
+    "kind": "plugin",
+    "id": "dont-play-that-song",
+    "repository": "https://github.com/Miaoyww/dont-play-that-song",
+    "branch": "main",
+    "authors": [
+      {
+        "name": "Miaoyww",
+        "link": "https://github.com/Miaoyww"
+      }
+    ],
+    "license": "GPL-3.0-only",
+    "related_path": ".",
+    "labels": [
+      "play"
+    ],
+    "preview": null,
+    "introduction": {
+      "zh-CN": "introduction-zh_cn.md"
+    },
+    "deprecated": false,
+    "blocked": false
+  },
+  "release": {
+    "schema_version": 1,
+    "id": "dont-play-that-song",
+    "latest_version": "1.0.0",
+    "latest_version_index": 0,
+    "releases": [
+      {
+        "url": "https://github.com/Miaoyww/dont-play-that-song/releases/tag/v1.0.0",
+        "name": "v1.0.0",
+        "tag_name": "v1.0.0",
+        "created_at": "2026-10-31T16:05:25Z",
+        "description": "**Full Changelog**: https://github.com/Miaoyww/dont-play-that-song/compare/v0.1.0...v1.0.0",
+        "prerelease": false,
+        "asset": {
+          "id": 695823549,
+          "name": "dont-play-that-song-1.0.0.zip",
+          "size": 4856628,
+          "download_count": 0,
+          "created_at": "2026-10-31T16:05:52Z",
+          "browser_download_url": "https://github.com/Miaoyww/dont-play-that-song/releases/download/v1.0.0/dont-play-that-song-1.0.0.zip",
+          "hash_md5": "ef4689799347e6ed305e59c52d7c75ee",
+          "hash_sha256": "df710be538bccf1a1c33de761a30c96fac05dbe6e8bfe39f8a0c8a17628657e5"
+        },
+        "meta": {
+          "schema_version": 1,
+          "id": "dont-play-that-song",
+          "name": "千万不要放那首歌",
+          "version": "1.0.0",
+          "description": "人, 你可以播放Shed A Light(bushi)",
+          "permissions": [
+            "player:read",
+            "ui",
+            "window:manage"
+          ],
+          "httpHosts": null,
+          "fileRoots": null,
+          "engines": {
+            "app": "^1.0.0",
+            "pluginApi": "^2.0.0",
+            "uiApi": "^2.0.0"
+          },
+          "backend": null,
+          "frontend": "ui.mjs",
+          "total_download_count": 7
+        }
+      }
+    ],
+    "history": [
+      {
+        "version": "1.0.0",
+        "tag_name": "v1.0.0",
+        "url": "https://github.com/Miaoyww/dont-play-that-song/releases/tag/v1.0.0",
+        "asset_url": "https://github.com/Miaoyww/dont-play-that-song/releases/download/v1.0.0/dont-play-that-song-1.0.0.zip",
+        "size": 4856628,
+        "created_at": "2026-10-31T16:05:25Z"
+      },
+      {
+        "version": "0.1.0",
+        "tag_name": "v0.1.0",
+        "url": "https://github.com/Miaoyww/dont-play-that-song/releases/tag/v0.1.0",
+        "asset_url": "https://github.com/Miaoyww/dont-play-that-song/releases/download/v0.1.0/dont-play-that-song-0.1.0.zip",
+        "size": 4856605,
+        "created_at": "2026-10-31T14:10:43Z"
+      }
+    ]
+  },
+  "meta": {
+    "schema_version": 1,
+    "id": "dont-play-that-song",
+    "name": "千万不要放那首歌",
+    "version": "1.0.0",
+    "description": "人, 你可以播放Shed A Light(bushi)",
+    "permissions": [
+      "player:read",
+      "ui",
+      "window:manage"
+    ],
+    "httpHosts": null,
+    "fileRoots": null,
+    "engines": {
+      "app": "^1.0.0",
+      "pluginApi": "^2.0.0",
+      "uiApi": "^2.0.0"
+    },
+    "backend": null,
+    "frontend": "ui.mjs",
+    "total_download_count": 7
+  }
+}

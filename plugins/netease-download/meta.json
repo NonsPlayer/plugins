@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "netease-download",
+  "name": "网易云下载",
+  "version": "1.1.1",
+  "description": "下载网易云歌曲到本地，管理下载队列、音质与保存目录。",
+  "permissions": [
+    "ui",
+    "config",
+    "storage",
+    "account:credentials",
+    "player:control",
+    "http:request",
+    "http:transfer",
+    "files:selected"
+  ],
+  "httpHosts": [
+    "*"
+  ],
+  "fileRoots": null,
+  "engines": {
+    "app": "^1.0.0",
+    "pluginApi": "^2.0.0",
+    "uiApi": "^2.0.0"
+  },
+  "backend": null,
+  "frontend": "ui.mjs",
+  "total_download_count": 38
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "adapter",
+  "distribution": "component",
+  "id": "xiaobai",
+  "repository": "https://github.com/Miaoyww/nons-adapter-xiaobai",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "Miaoyww",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "MIT",
+  "related_path": ".",
+  "labels": [],
+  "preview": null,
+  "introduction": {},
+  "deprecated": false,
+  "blocked": false
+}
