@@ -1,0 +1,16 @@
+{
+  "id": "dont-play-that-song",
+  "repository": "https://github.com/Miaoyww/dont-play-that-song",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "Miaoyww",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "GPL-3.0-only",
+  "labels": ["play"],
+  "introduction": {
+    "zh-CN": "introduction-zh_cn.md"
+  }
+}
