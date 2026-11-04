@@ -7,7 +7,7 @@
 - 插件或适配器已经打包成 ZIP；原生源码条目包含实际源码与源码 manifest。
 - 插件或适配器适合公开使用，不是纯自用或明显重复的条目。
 - 你是条目的作者、维护者或协作者，或有书面授权。
-- 使用白名单内的开源许可证。
+- 注册的许可证标识与作品实际许可证一致。
 
 ## 注册步骤
 
@@ -49,7 +49,7 @@
 | `repository` | 是 | 公开的 GitHub 仓库地址 |
 | `branch` | 是 | 用于展示源码链接的分支 |
 | `authors` | 是 | 至少一位作者；每项为 `{ "name": "...", "link": "https://..." }` |
-| `license` | 是 | SPDX 许可证标识，必须在白名单内 |
+| `license` | 是 | 非空的许可证标识，与作品实际许可证一致 |
 | `related_path` | 否 | 条目在仓库中的子目录；monorepo 使用，根目录填 `.` 或省略 |
 | `labels` | 否 | 最多 8 个标签，小写字母、数字和连字符 |
 | `preview` | 否 | 预览图 URL，必须使用 HTTPS |
@@ -110,34 +110,13 @@
 
 源码 manifest 不声明 `descriptor` 或 `resourceProvider`。索引标记 `distribution: "source"`、`installable: false`、`artifact: null`，源码链接和哈希位于 `sourceArtifact`。此类条目需要重新构建宿主，安装器必须排除。
 
-## 许可证白名单
-
-```text
-0BSD
-AGPL-3.0-only
-AGPL-3.0-or-later
-Apache-2.0
-BSD-2-Clause
-BSD-3-Clause
-GPL-3.0-only
-GPL-3.0-or-later
-ISC
-LGPL-3.0-only
-LGPL-3.0-or-later
-MIT
-MPL-2.0
-Zlib
-```
-
-本仓库使用 GPL-3.0-only。第三方条目保留自己的许可证，但必须在上述白名单内。
-
 ## 审核
 
 注册 PR 是唯一的人工审核点。维护者会检查：
 
 - 提交者是否有权提交；
 - 源码是否与描述一致，是否存在恶意行为；
-- 许可证是否合规；
+- 许可证标识是否真实且与作品一致；
 - Release 资产是否能下载，manifest 是否合规；
 - 名称、描述和标签是否准确。
 

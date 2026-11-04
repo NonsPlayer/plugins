@@ -51,12 +51,22 @@ test('rejects an unsafe related_path', () => {
   assert.equal(validator({ ...valid, related_path: '../outside' }), false)
 })
 
-test('rejects a license outside the whitelist', () => {
-  assert.equal(validator({ ...valid, license: 'WTFPL' }), false)
+test('accepts an arbitrary license identifier', () => {
+  assert.equal(validator({ ...valid, license: 'WTFPL' }), true)
+})
+
+test('rejects an empty license', () => {
+  assert.equal(validator({ ...valid, license: '' }), false)
 })
 
 test('accepts the same shape for adapter registrations', async () => {
   const adapter = await loadRegistrationValidator(path.join(root, 'schemas/adapter_info.schema.json'))
+  const withoutLicense = { ...valid }
+  delete withoutLicense.license
+
   assert.equal(adapter(valid), true, formatAjvErrors(adapter.errors))
+  assert.equal(adapter({ ...valid, license: 'WTFPL' }), true, formatAjvErrors(adapter.errors))
+  assert.equal(adapter({ ...valid, license: '' }), false)
+  assert.equal(adapter(withoutLicense), false)
   assert.equal(adapter({ ...valid, extra: true }), false)
 })
