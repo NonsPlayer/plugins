@@ -32,7 +32,7 @@
 
 ## 禁用以及删除
 
-若您的插件或适配器不再更新, 您可以在 PR 中将 `deprecated` 或 `blocked` 字段设置为 `true`，或直接删除注册文件. 
+若您的插件或适配器不再更新, 您可以在 PR 中将 `deprecated` 字段设置为 `true`，或直接删除注册文件. 
 
 
 # manifest.json示例
