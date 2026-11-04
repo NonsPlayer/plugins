@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/NonsPlayer/plugins/main/schemas/adapter_manifest.schema.json",
+  "title": "NonsPlayer 适配器 Manifest",
+  "description": "适配器 ZIP 根目录 manifest.json 的结构约束。可安装适配器使用 descriptor 或 resourceProvider；目录源码条目使用 source。",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/descriptorManifest"
+    },
+    {
+      "$ref": "#/$defs/resourceProviderManifest"
+    },
+    {
+      "$ref": "#/$defs/sourceManifest"
+    }
+  ],
+  "$defs": {
+    "version": {
+      "type": "string",
+      "description": "适配器版本，必须是 SemVer，并与 Release tag 一致。"
+    },
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$",
+      "description": "小写字母开头，只含小写字母、数字和连字符，最多 64 个字符。"
+    },
+    "hostRule": {
+      "type": "string",
+      "maxLength": 253,
+      "pattern": "^(?:\\*\\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+      "not": {
+        "pattern": "^(?:\\*\\.)?(?:\\d{1,3}\\.){3}\\d{1,3}$"
+      },
+      "description": "精确 DNS 域名或 *. 前缀的子域规则；不含协议、端口、IP 或单独的通配符。"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["httpHosts", "websocketHosts", "system", "state", "credentials"],
+      "properties": {
+        "httpHosts": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hostRule"
+          }
+        },
+        "websocketHosts": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hostRule"
+          }
+        },
+        "system": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "boolean"
+        },
+        "credentials": {
+          "type": "boolean"
+        }
+      },
+      "description": "适配器网络与宿主能力授权。"
+    },
+    "loginMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "sourceDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "displayName", "contractVersion", "capabilities"],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/sourceId",
+          "not": {
+            "const": "local"
+          },
+          "description": "适配器平台标识，不能为 local。"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S",
+          "description": "适配器显示名称，上限按宿主校验为 256 字节。"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "\\S",
+          "description": "适配器功能描述，最多 1024 个字符。"
+        },
+        "platforms": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceId",
+            "not": {
+              "const": "local"
+            }
+          },
+          "description": "可解析的原始平台标识；不能包含 local，最多 16 个。"
+        },
+        "contractVersion": {
+          "const": 1,
+          "description": "适配器契约版本，当前固定为 1。"
+        },
+        "loginMethods": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/loginMethod"
+          },
+          "description": "登录方式；声明时 capabilities 必须包含 account。"
+        },
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "search",
+              "browse",
+              "account",
+              "userLibrary",
+              "favorites",
+              "favoritesRead",
+              "playlistWrite",
+              "recommendations",
+              "privateFm",
+              "lyrics",
+              "download"
+            ]
+          },
+          "description": "适配器实现的能力集合。"
+        },
+        "coverHosts": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hostRule"
+          },
+          "description": "公开封面域名，最多 32 个。"
+        },
+        "shareLinkTemplates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "track": {
+              "$ref": "#/$defs/shareLinkTemplate"
+            },
+            "playlist": {
+              "$ref": "#/$defs/shareLinkTemplate"
+            },
+            "album": {
+              "$ref": "#/$defs/shareLinkTemplate"
+            },
+            "artist": {
+              "$ref": "#/$defs/shareLinkTemplate"
+            }
+          },
+          "description": "公开实体链接模板，必须以 HTTP(S) 开头且恰好包含一个 {id}。"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["loginMethods"],
+            "properties": {
+              "loginMethods": {
+                "minItems": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "capabilities": {
+                "contains": {
+                  "const": "account"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "resourceProviderDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "contractVersion", "platforms"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sourceId",
+          "not": {
+            "enum": ["local", "official"]
+          },
+          "description": "音源标识，不能为 local 或 official。"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S",
+          "description": "音源显示名称，上限按宿主校验为 256 字节。"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "\\S",
+          "description": "音源功能描述，最多 1024 个字符。"
+        },
+        "contractVersion": {
+          "const": 1,
+          "description": "适配器契约版本，当前固定为 1。"
+        },
+        "platforms": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceId",
+            "not": {
+              "const": "local"
+            }
+          },
+          "description": "音源支持的平台标识；不能为空或包含 local，最多 16 个。"
+        },
+        "searchPlatforms": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceId",
+            "not": {
+              "const": "local"
+            }
+          },
+          "description": "参与搜索的平台，必须是 platforms 的子集。"
+        },
+        "coverHosts": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/hostRule"
+          },
+          "description": "公开封面域名，最多 32 个。"
+        }
+      }
+    },
+    "shareLinkTemplate": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "\\{id\\}",
+      "description": "HTTP(S) 链接模板，恰好包含一个 {id} 占位符。"
+    },
+    "descriptorManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "descriptor", "permissions"],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "descriptor": {
+          "$ref": "#/$defs/sourceDescriptor"
+        },
+        "permissions": {
+          "$ref": "#/$defs/permissions"
+        }
+      },
+      "description": "完整平台适配器；包内需包含 adapter.component.wasm 或 dist/adapter.component.wasm。"
+    },
+    "resourceProviderManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "resourceProvider", "permissions"],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "resourceProvider": {
+          "$ref": "#/$defs/resourceProviderDescriptor"
+        },
+        "permissions": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/permissions"
+            }
+          ],
+          "properties": {
+            "websocketHosts": {
+              "maxItems": 0
+            },
+            "state": {
+              "const": false
+            },
+            "credentials": {
+              "const": false
+            }
+          },
+          "description": "音源适配器不能申请账号、状态或长连接权限。"
+        }
+      },
+      "description": "独立音源适配器；包内需包含 adapter.component.wasm 或 dist/adapter.component.wasm。"
+    },
+    "sourceManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "source"],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "name"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/sourceId"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024,
+              "pattern": "\\S"
+            }
+          }
+        }
+      },
+      "description": "目录源码条目；只提供源码元数据，不可安装，包内需包含实际源码。"
+    }
+  }
+}

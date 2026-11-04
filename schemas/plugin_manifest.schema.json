@@ -1,0 +1,439 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/NonsPlayer/plugins/main/schemas/plugin_manifest.schema.json",
+  "title": "NonsPlayer 插件 Manifest",
+  "description": "插件 ZIP 根目录 manifest.json 的结构约束。跨字段关系与运行时兼容性由宿主校验。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "version", "permissions", "engines"],
+  "anyOf": [
+    {
+      "required": ["backend"],
+      "properties": {
+        "backend": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "required": ["frontend"],
+      "properties": {
+        "frontend": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": ["fileRoots"],
+        "properties": {
+          "fileRoots": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "contains": {
+              "const": "files:selected"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["permissions"],
+        "properties": {
+          "permissions": {
+            "contains": {
+              "enum": ["http:request", "http:transfer"]
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["httpHosts"],
+        "properties": {
+          "httpHosts": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["httpHosts"],
+        "properties": {
+          "httpHosts": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "contains": {
+              "enum": ["http:request", "http:transfer"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["contributes"],
+        "properties": {
+          "contributes": {
+            "anyOf": [
+              {
+                "required": ["windows"],
+                "properties": {
+                  "windows": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "required": ["views"],
+                "properties": {
+                  "views": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "required": ["pages"],
+                "properties": {
+                  "pages": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "required": ["navigation"],
+                "properties": {
+                  "navigation": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "required": ["contextMenus"],
+                "properties": {
+                  "contextMenus": {
+                    "minItems": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": ["frontend"],
+        "properties": {
+          "frontend": {
+            "type": "string"
+          },
+          "permissions": {
+            "contains": {
+              "const": "ui"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["contributes"],
+        "properties": {
+          "contributes": {
+            "required": ["windows"],
+            "properties": {
+              "windows": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "contains": {
+              "const": "window:manage"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/id",
+      "description": "插件 ID，必须与注册目录名和 manifest 内的插件标识一致。"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S",
+      "description": "插件显示名称，上限按宿主校验为 128 字节。"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "\\S",
+      "description": "插件功能描述，纯文本，最多 1024 个字符。"
+    },
+    "repository": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 2048,
+      "format": "uri",
+      "pattern": "^https?://\\S+$",
+      "description": "代码仓库链接，必须是不含凭证的 HTTP(S) URL。"
+    },
+    "version": {
+      "type": "string",
+      "description": "插件版本，必须是 SemVer。"
+    },
+    "backend": {
+      "type": ["string", "null"],
+      "pattern": "\\.wasm$",
+      "description": "WASM 后端入口，相对于插件包根目录。"
+    },
+    "frontend": {
+      "type": ["string", "null"],
+      "pattern": "\\.mjs$",
+      "description": "前端入口，相对于插件包根目录。"
+    },
+    "configuration": {
+      "type": ["string", "null"],
+      "pattern": "\\.json$",
+      "description": "包内配置声明路径；声明统一配置字段时需要 config 权限。"
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "clipboard:read",
+          "http:request",
+          "http:transfer",
+          "secrets",
+          "account:credentials",
+          "storage",
+          "music:metadata",
+          "music:library",
+          "music:write",
+          "player:read",
+          "player:control",
+          "ui",
+          "config",
+          "files:data",
+          "files:selected",
+          "process:spawn",
+          "window:manage"
+        ]
+      },
+      "description": "插件权限集合，不允许重复或使用未列出的权限。"
+    },
+    "httpHosts": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 253,
+        "pattern": "^(?:\\*|(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)$"
+      },
+      "description": "http:request 与 http:transfer 的域名范围；支持精确域名或 *，不含协议、端口、IP 或子域通配符。"
+    },
+    "fileRoots": {
+      "type": "array",
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "const": "*"
+      },
+      "description": "文件访问范围；当前只允许 [\"*\"]，且必须同时声明 files:selected。"
+    },
+    "engines": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["app", "pluginApi", "uiApi"],
+      "properties": {
+        "app": {
+          "type": "string",
+          "description": "兼容的 NonsPlayer 版本范围，必须是合法 SemVer range。"
+        },
+        "pluginApi": {
+          "type": "string",
+          "description": "兼容的插件 API 版本范围，必须是合法 SemVer range。"
+        },
+        "uiApi": {
+          "type": "string",
+          "description": "兼容的 UI API 版本范围，必须是合法 SemVer range。"
+        }
+      },
+      "description": "宿主兼容范围。"
+    },
+    "contributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "windows": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "export"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "export": {
+                "$ref": "#/$defs/export"
+              }
+            }
+          },
+          "description": "独立窗口；需要 window:manage 权限，最多 4 个。"
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "slot", "export"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "slot": {
+                "const": "main.overlay"
+              },
+              "export": {
+                "$ref": "#/$defs/export"
+              }
+            }
+          }
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "path", "export"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/"
+              },
+              "export": {
+                "$ref": "#/$defs/export"
+              }
+            }
+          },
+          "description": "插件页面；路径必须以 / 开头，且不能包含 ?、#、\\、%、: 或 .、.. 路径段。"
+        },
+        "navigation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "page"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "\\S"
+              },
+              "page": {
+                "$ref": "#/$defs/id",
+                "description": "必须引用同一 manifest 中 pages 的 id。"
+              },
+              "category": {
+                "enum": ["tool"],
+                "description": "tool 在宿主工具页以卡片显示；省略则沿用主导航入口。"
+              }
+            }
+          }
+        },
+        "commands": {
+          "type": "array"
+        },
+        "menus": {
+          "type": "array"
+        },
+        "contextMenus": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "target", "source", "label", "export"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "target": {
+                "const": "song"
+              },
+              "source": {
+                "$ref": "#/$defs/id",
+                "description": "歌曲来源标识，例如 netease 或 local；菜单仅在来源匹配时显示。"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "\\S"
+              },
+              "icon": {
+                "$ref": "#/$defs/id",
+                "description": "图标标识；当前支持 download、layout-grid，省略或未知标识使用 LayoutGrid。"
+              },
+              "export": {
+                "$ref": "#/$defs/export"
+              }
+            }
+          },
+          "description": "歌曲右键菜单贡献，最多 16 个。"
+        },
+        "settings": {
+          "type": "array"
+        },
+        "shortcuts": {
+          "type": "array"
+        }
+      },
+      "description": "插件向宿主声明的 UI 扩展；声明 windows、views、pages、navigation 或 contextMenus 时需要 frontend 与 ui 权限。"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$",
+      "description": "小写字母开头，只含小写字母、数字和连字符，最多 64 个字符；不能使用 Windows 保留设备名。"
+    },
+    "export": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_]{1,128}$",
+      "description": "前端模块导出的组件或函数名。"
+    }
+  }
+}

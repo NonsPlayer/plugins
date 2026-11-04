@@ -1,83 +1,91 @@
+<div align="center">
+
+<img src="docs/app-icon.png" alt="NonsPlayer Logo" height="128" width="128">
+
 # NonsPlayer 插件目录
 
-NonsPlayer 的插件与音乐适配器目录。仓库保存注册信息和自动生成的元数据，源码、构建产物与 Release 放在各作者自己的仓库。
+[![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![Tauri](https://img.shields.io/badge/Tauri-2.0-24C8DB?style=flat-square&logo=tauri&logoColor=white)](https://tauri.app/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-lightgrey?style=flat-square)](#)
+![License](https://img.shields.io/github/license/Miaoyww/NonsPlayer)
 
-## 工作方式
+**轻量 | 全平台 | 流媒体&本地**
 
-- 作者在自己的仓库发布 GitHub Release：插件资产是 ZIP，根目录包含 `manifest.json`；Component 适配器资产是 ZIP，根目录包含带 `version`、`descriptor` 或 `resourceProvider`、`permissions` 的 `manifest.json`。原生源码条目的 ZIP 则使用带 `version` 和 `source` 的源码 manifest。
-- 作者提一次 PR，添加 `plugins/<id>/plugin_info.json` 或 `adapters/<id>/adapter_info.json`。合并后发版不需要再提交 PR。
-- 定时任务每 30 分钟拉取最新 Release，读取 manifest，校验 id、版本与 tag 一致，计算 MD5/SHA-256。
-- 生成物发布到 `meta` 和 `catalogue` 分支：
-  - `meta/index.json`：聚合索引，`plugins` 与 `adapters` 两个数组，宿主和工具优先读取。
-  - `meta/plugins/<id>/`：单个插件；`meta/adapters/<id>/`：单个适配器。各自包含 `plugin.json` 或 `adapter.json`、`release.json`、`meta.json`、`all.json`、`update_report.json`。
-  - `catalogue/`：可浏览的 Markdown 目录，插件页面位于 `catalogue/plugins/<id>.md`，适配器页面位于 `catalogue/adapters/<id>.md`。
+</div>
 
-## 目录结构
 
-```text
-plugins/<id>/plugin_info.json       # 插件注册
-plugins/<id>/introduction*.md       # 可选介绍
-adapters/<id>/adapter_info.json     # 适配器注册
-adapters/<id>/introduction*.md      # 可选介绍
-schemas/plugin_info.schema.json
-schemas/adapter_info.schema.json
-scripts/                            # 校验、抓取、生成
-.github/workflows/                  # CI 与定时更新
+# 目录
+
+在[这里](https://github.com/NonsPlayer/plugins/tree/catalogue)查看所有插件.
+
+# 插件的提交及更新
+
+## 提交
+
+1. Clone 本仓库到本地.
+2. 添加注册文件：插件使用 `plugins/<id>/plugin_info.json`，适配器使用 `adapters/<id>/adapter_info.json`.
+3. 提交 PR.字段与 Release 要求见 [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 更新
+
+1. 直接在自己的仓库发布新的 GitHub Release 即可.
+
+## 禁用以及删除
+
+若您的插件或适配器不再更新, 您可以在 PR 中将 `deprecated` 或 `blocked` 字段设置为 `true`，或直接删除注册文件. 
+
+
+# manifest.json示例
+
+## 插件
+
+```json
+{
+  "id": "example-plugin",
+  "name": "Example Plugin",
+  "version": "1.0.0",
+  "description": "An example plugin",
+  "permissions": ["ui", "storage"],
+  "engines": {
+    "app": "^1.0.0",
+    "pluginApi": "^2.1.0",
+    "uiApi": "^2.1.0"
+  },
+  "frontend": "ui.mjs"
+}
 ```
 
-## 对插件与适配器作者
+`backend` 可选，指向 `.wasm` 文件；`backend` 与 `frontend` 至少声明一个。
 
-1. 在自己的仓库发布 GitHub Release，资产是 ZIP，根目录包含 `manifest.json`。
-2. 在本仓库新增 `plugins/<id>/plugin_info.json` 或 `adapters/<id>/adapter_info.json`，提 PR。字段和发布要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
-3. 合并后，发版不需要再动本仓库；定时任务会自动发现新版本。
+完整字段见 [plugin_manifest.schema.json](schemas/plugin_manifest.schema.json "plugin_manifest.schema.json").
 
-插件模板与构建 CLI 随 Nons 侧发布的 `@nonsplayer/plugin-sdk` 提供；适配器使用 `packages/music-adapter-sdk` 的契约构建 WASM Component。
 
-## 维护者
+## 适配器
 
-- 审核注册 PR：源码、许可证、权限、Release 资产。
-- 在 Actions 中手动触发 `Update catalogue` 可立即刷新。
-- 下架或标记弃用：在注册文件中设置 `deprecated` 或 `blocked`，不要删除条目。
-- `unavailable` 由更新脚本在抓取失败时自动写入 `update_report.json`。
-- 原生适配器源码条目使用 `distribution: "source"`，索引的 `installable` 为 `false`、`artifact` 为 `null`，源码下载位于 `sourceArtifact`，需要重新构建宿主。
+可安装适配器必须声明 `descriptor` 或 `resourceProvider` 之一，并提供 `permissions`。包内需要 `adapter.component.wasm`，位于根目录或 `dist/`。
 
-## 本地开发
-
-```bash
-pnpm install
-pnpm test
-pnpm catalogue:check --offline
+```json
+{
+  "version": "1.0.0",
+  "descriptor": {
+    "source": "example-platform",
+    "displayName": "Example Adapter",
+    "description": "示例适配器",
+    "contractVersion": 1,
+    "capabilities": ["search", "browse"],
+    "platforms": ["example-platform"],
+    "coverHosts": ["cdn.example.org"]
+  },
+  "permissions": {
+    "httpHosts": ["api.example.org"],
+    "websocketHosts": [],
+    "system": false,
+    "state": true,
+    "credentials": true
+  }
+}
 ```
 
-`catalogue:check` 不带 `--offline` 时会访问 GitHub，需要 `GITHUB_TOKEN`。单个注册校验失败会逐项报告，其余注册继续校验，命令本身不会因此失败。`catalogue:update` 需要 `GITHUB_TOKEN`，并在本地生成 `meta/` 和 `catalogue/`（两者已被 `.gitignore` 忽略）。
+使用 `resourceProvider` 时，描述对象包含 `id`、`displayName`、`contractVersion`、`platforms`，可选 `description`、`searchPlatforms`、`coverHosts`；此类适配器不能申请 `state`、`credentials` 或非空 `websocketHosts`。
 
-## 数据地址
-
-```text
-https://raw.githubusercontent.com/NonsPlayer/plugins/meta/index.json
-https://raw.githubusercontent.com/NonsPlayer/plugins/meta/plugins/<id>/all.json
-https://raw.githubusercontent.com/NonsPlayer/plugins/meta/adapters/<id>/all.json
-```
-
-`Update catalogue` 工作流还会在发布 `meta` 分支后，将同一份 `meta/` 内容同步到 Cloudflare R2 的 `nons-plugin` 桶。同步使用删除模式，桶内已经不在最新 `meta/` 中的对象会自动清理；`catalogue/` 不会上传。
-
-`index.json` 的插件与适配器条目，以及各条目的 `meta.json` 和 `all.json` 中的 `meta`，提供 `total_download_count`，表示历史 Release 的累计资产下载次数：
-
-- 汇总所有符合现有 tag 与 ZIP 选择规则的正式 Release，每个 Release 只计入选中的一个 ZIP，不受 `maxReleases` 限制。
-- 排除草稿、预发布、无效 tag 和没有适用 ZIP 的 Release；资产计数缺失时按 `0` 计算。
-- 直接读取 GitHub API 的 `download_count`，不逐个下载校验历史包，因此包校验失败的候选仍计入。Release 资产被删除或替换后，累计值可能下降；该值不是安装人数。
-- 每次成功更新都会刷新计数；更新失败时保留上次成功的值。旧缓存尚无累计字段时，该字段保持缺失，直到一次成功更新。
-
-单个所选资产的下载次数仍位于 `release.json` 的 `releases[0].asset.download_count`，以及 `all.json` 中的相同 Release 结构。
-
-维护者需要在仓库的 GitHub Actions secrets 中配置：
-
-- `R2_ENDPOINT`：完整的 R2 S3 endpoint，例如 `https://<account-id>.r2.cloudflarestorage.com`。
-- `R2_ACCESS_KEY_ID`：R2 S3 API 令牌的访问密钥 ID。
-- `R2_SECRET_ACCESS_KEY`：R2 S3 API 令牌的机密访问密钥。
-
-公开下载还需要在 Cloudflare 中为该桶配置自定义域名或公开访问地址。公开域名不写入工作流，避免在域名尚未确定时形成错误的客户端地址。
-
-## 许可证
-
-本仓库使用 GPL-3.0-only。第三方插件与适配器保留自己的许可证，但必须在白名单内。
+完整字段见 [adapter_manifest.schema.json](schemas/adapter_manifest.schema.json "adapter_manifest.schema.json").
