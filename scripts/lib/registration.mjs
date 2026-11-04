@@ -16,11 +16,17 @@ async function readDirectory(dir) {
   }
 }
 
-async function loadKind(root, kind) {
+async function loadKind(root, kind, { tolerant = false, errors = [] } = {}) {
   const spec = KINDS[kind]
   const base = path.join(root, spec.directory)
   const entries = await readDirectory(base)
   const registrations = []
+
+  const report = (entry, error) => {
+    const message = `${spec.directory}/${entry.name}: ${error.message}`
+    if (!tolerant) throw new Error(message)
+    errors.push({ id: entry.name, kind, message: error.message })
+  }
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue
@@ -30,13 +36,20 @@ async function loadKind(root, kind) {
     try {
       info = JSON.parse(await readFile(file, 'utf8'))
     } catch (error) {
-      throw new Error(`${spec.directory}/${entry.name}: cannot read ${spec.file}: ${error.message}`)
+      report(entry, new Error(`cannot read ${spec.file}: ${error.message}`))
+      continue
     }
     if (info.id !== entry.name) {
-      throw new Error(`${spec.directory}/${entry.name}: id ${info.id} does not match the directory name`)
+      report(entry, new Error(`id ${info.id} does not match the directory name`))
+      continue
     }
     if (info.related_path !== undefined) {
-      assertSafeRelativePath(info.related_path, 'related_path')
+      try {
+        assertSafeRelativePath(info.related_path, 'related_path')
+      } catch (error) {
+        report(entry, error)
+        continue
+      }
     }
     registrations.push({
       ...info,
@@ -49,8 +62,8 @@ async function loadKind(root, kind) {
   return registrations
 }
 
-export const loadPluginRegistrations = (root) => loadKind(root, 'plugin')
-export const loadAdapterRegistrations = (root) => loadKind(root, 'adapter')
+export const loadPluginRegistrations = (root, options) => loadKind(root, 'plugin', options)
+export const loadAdapterRegistrations = (root, options) => loadKind(root, 'adapter', options)
 
 export function publicRegistration(registration) {
   const result = {
@@ -71,10 +84,11 @@ export function publicRegistration(registration) {
   return result
 }
 
-export async function loadAllRegistrations(root) {
+export async function loadAllRegistrations(root, options = {}) {
+  const errors = []
   const [plugins, adapters] = await Promise.all([
-    loadPluginRegistrations(root),
-    loadAdapterRegistrations(root),
+    loadPluginRegistrations(root, { ...options, errors }),
+    loadAdapterRegistrations(root, { ...options, errors }),
   ])
-  return { plugins, adapters }
+  return { plugins, adapters, errors }
 }
