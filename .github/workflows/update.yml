@@ -1,6 +1,9 @@
 name: Update catalogue
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '15,45 * * * *'
   workflow_dispatch:
