@@ -2,11 +2,10 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createGitHubClient, parseGitHubRepository } from './lib/github.mjs'
-import { resolveInside } from './lib/paths.mjs'
-import { loadAllRegistrations, publicRegistration } from './lib/registration.mjs'
-import { resolveLatestRelease } from './lib/release.mjs'
-import { formatAjvErrors, loadRegistrationValidator } from './lib/schema.mjs'
+import { checkRegistrations } from './lib/check.mjs'
+import { createGitHubClient } from './lib/github.mjs'
+import { loadAllRegistrations } from './lib/registration.mjs'
+import { loadRegistrationValidator } from './lib/schema.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const args = new Set(process.argv.slice(2))
@@ -20,9 +19,11 @@ const validators = {
 }
 
 let registrations
+let loadErrors
 try {
-  const loaded = await loadAllRegistrations(root)
+  const loaded = await loadAllRegistrations(root, { tolerant: true })
   registrations = [...loaded.plugins, ...loaded.adapters]
+  loadErrors = loaded.errors
 } catch (error) {
   console.error(`[error] ${error.message}`)
   process.exit(1)
@@ -34,64 +35,13 @@ if (!offline && !token) {
   console.warn('[warn] GITHUB_TOKEN is not set; remote checks are skipped')
 }
 
-let failed = 0
+const result = await checkRegistrations({
+  registrations,
+  loadErrors,
+  validators,
+  github,
+  skipRelease,
+  maxReleases: config.update?.maxReleases ?? 20,
+})
 
-for (const registration of registrations) {
-  const errors = []
-  const validator = validators[registration.kind]
-
-  if (!validator(publicRegistration(registration))) {
-    errors.push(formatAjvErrors(validator.errors))
-  }
-  for (const [language, file] of Object.entries(registration.introduction ?? {})) {
-    try {
-      await readFile(resolveInside(registration._dir, file, `introduction.${language}`))
-    } catch (error) {
-      errors.push(error.message)
-    }
-  }
-
-  if (errors.length === 0 && github) {
-    try {
-      const { owner, repo } = parseGitHubRepository(registration.repository)
-      const repository = await github.getRepository(owner, repo)
-      if (repository.private) {
-        throw new Error('repository is private')
-      }
-      await github.getBranch(owner, repo, registration.branch)
-      if (registration.related_path !== undefined && registration.related_path !== '.') {
-        await github.getContent(owner, repo, registration.related_path, registration.branch)
-      }
-      if (!skipRelease) {
-        const resolved = await resolveLatestRelease({
-          github,
-          owner,
-          repo,
-          pluginId: registration.id,
-          kind: registration.kind,
-          distribution: registration.distribution,
-          maxReleases: config.update?.maxReleases ?? 20,
-        })
-        console.log(`[ok] ${registration.id}: ${resolved.version} ${resolved.release.tag_name}`)
-        continue
-      }
-    } catch (error) {
-      errors.push(error.message)
-    }
-  }
-
-  if (errors.length > 0) {
-    failed += 1
-    for (const error of errors) {
-      console.error(`[error] ${registration.id}: ${error}`)
-    }
-  } else {
-    console.log(`[ok] ${registration.id}`)
-  }
-}
-
-if (failed > 0) {
-  console.error(`[error] ${failed} registration(s) failed`)
-  process.exit(1)
-}
-console.log(`Checked ${registrations.length} registration(s).`)
+console.log(`Checked ${result.checked} registration(s); ${result.failed} failed.`)

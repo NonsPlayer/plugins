@@ -49,7 +49,7 @@ pnpm test
 pnpm catalogue:check --offline
 ```
 
-`catalogue:check` 不带 `--offline` 时会访问 GitHub，需要 `GITHUB_TOKEN`。`catalogue:update` 需要 `GITHUB_TOKEN`，并在本地生成 `meta/` 和 `catalogue/`（两者已被 `.gitignore` 忽略）。
+`catalogue:check` 不带 `--offline` 时会访问 GitHub，需要 `GITHUB_TOKEN`。单个注册校验失败会逐项报告，其余注册继续校验，命令本身不会因此失败。`catalogue:update` 需要 `GITHUB_TOKEN`，并在本地生成 `meta/` 和 `catalogue/`（两者已被 `.gitignore` 忽略）。
 
 ## 数据地址
 

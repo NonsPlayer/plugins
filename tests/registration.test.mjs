@@ -74,3 +74,21 @@ test('loads plugins and adapters independently', async (t) => {
     ['demo-adapter'],
   )
 })
+
+test('collects invalid registrations without dropping valid ones', async (t) => {
+  const root = await tempRoot(t)
+  await writeRegistration(root, 'plugin', registration)
+  const broken = path.join(root, 'plugins', 'broken-plugin')
+  await mkdir(broken, { recursive: true })
+  await writeFile(path.join(broken, 'plugin_info.json'), '{')
+
+  const loaded = await loadAllRegistrations(root, { tolerant: true })
+  assert.deepEqual(
+    loaded.plugins.map((item) => item.id),
+    ['demo-plugin'],
+  )
+  assert.equal(loaded.errors.length, 1)
+  assert.equal(loaded.errors[0].id, 'broken-plugin')
+  assert.equal(loaded.errors[0].kind, 'plugin')
+  assert.match(loaded.errors[0].message, /cannot read plugin_info\.json/)
+})
