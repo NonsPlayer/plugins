@@ -1,9 +1,12 @@
-import { readdir } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import { mkdir, readdir } from 'node:fs/promises'
 import path from 'node:path'
+import { distUrl, normalizeCdnConfig, writeDist } from './dists.mjs'
 import { parseGitHubRepository } from './github.mjs'
 import { readJson, removeDir, writeJson, writeText } from './json.mjs'
 import { renderAdapterPage, renderCatalogueReadme, renderPluginPage } from './markdown.mjs'
 import { buildAuthors, buildEntry, buildIndex } from './meta.mjs'
+import { resolveInside } from './paths.mjs'
 import { resolveLatestRelease } from './release.mjs'
 
 async function collectPrevious(metaDir) {
@@ -35,6 +38,56 @@ function previousRecord(kind, previous) {
   return kind === 'adapter' ? previous.adapter : previous.plugin
 }
 
+async function restoreCachedArtifact({ github, cached, cdn, distDir, kind, id }) {
+  const release = cached.release
+  const asset = release?.releases?.[0]?.asset
+  if (!cdn || typeof release?.latest_version !== 'string' || !asset) return cached
+
+  for (const url of [asset.cdn_url, asset.browser_download_url]) {
+    if (typeof url !== 'string') continue
+    try {
+      const bytes = await github.download(url)
+      if (typeof asset.size === 'number' && bytes.length !== asset.size) {
+        throw new Error(`asset size mismatch: expected ${asset.size}, got ${bytes.length}`)
+      }
+      const digest = createHash('sha256').update(bytes).digest('hex')
+      if (typeof asset.hash_sha256 === 'string' && digest !== asset.hash_sha256) {
+        throw new Error('asset sha256 mismatch')
+      }
+      const name = await writeDist({
+        directory: distDir,
+        kind,
+        id,
+        version: release.latest_version,
+        sha256: digest,
+        bytes,
+      })
+      return {
+        ...cached,
+        release: {
+          ...release,
+          releases: release.releases.map((item, index) =>
+            index === 0
+              ? { ...item, asset: { ...asset, cdn_url: distUrl(cdn.baseUrl, name) } }
+              : item,
+          ),
+        },
+      }
+    } catch {}
+  }
+
+  const { cdn_url: _unused, ...assetWithoutCdn } = asset
+  return {
+    ...cached,
+    release: {
+      ...release,
+      releases: release.releases.map((item, index) =>
+        index === 0 ? { ...item, asset: assetWithoutCdn } : item,
+      ),
+    },
+  }
+}
+
 async function updateKind({
   kind,
   registrations,
@@ -44,6 +97,8 @@ async function updateKind({
   maxReleases,
   now,
   logger,
+  cdn,
+  distDir,
   entries,
   reports,
 }) {
@@ -60,7 +115,19 @@ async function updateKind({
         distribution: registration.distribution,
         maxReleases,
       })
-      const entry = buildEntry(kind, registration, resolved)
+      let artifactUrl = null
+      if (cdn) {
+        const name = await writeDist({
+          directory: distDir,
+          kind,
+          id: registration.id,
+          version: resolved.version,
+          sha256: resolved.sha256,
+          bytes: resolved.bytes,
+        })
+        artifactUrl = distUrl(cdn.baseUrl, name)
+      }
+      const entry = buildEntry(kind, registration, resolved, { artifactUrl })
       entries.push(entry)
       const report = {
         id: registration.id,
@@ -90,12 +157,20 @@ async function updateKind({
 
       const cached = previous.previousEntries.get(registration.id)
       if (cached) {
-        const record = previousRecord(kind, cached)
+        const restored = await restoreCachedArtifact({
+          github,
+          cached,
+          cdn,
+          distDir,
+          kind,
+          id: registration.id,
+        })
+        const record = previousRecord(kind, restored)
         const merged = {
           kind,
           record,
-          release: cached.release,
-          meta: cached.meta,
+          release: restored.release,
+          meta: restored.meta,
         }
         entries.push({ ...merged, all: merged })
         logger.warn(`[warn] ${registration.id}: ${error.message}; keeping previous metadata`)
@@ -111,6 +186,7 @@ export async function runUpdate({
   registrations,
   github,
   maxReleases = 20,
+  cdn: cdnConfig = null,
   now = () => new Date().toISOString(),
   logger = console,
 }) {
@@ -118,6 +194,12 @@ export async function runUpdate({
   const pluginMetaDir = path.join(metaDir, 'plugins')
   const adapterMetaDir = path.join(metaDir, 'adapters')
   const catalogueDir = path.join(root, 'catalogue')
+  const cdn = normalizeCdnConfig(cdnConfig)
+  const distDir = cdn ? resolveInside(root, cdn.directory, 'cdn.directory') : null
+  if (distDir) {
+    await removeDir(distDir)
+    await mkdir(distDir, { recursive: true })
+  }
   const pluginPrevious = await collectPrevious(pluginMetaDir)
   const adapterPrevious = await collectPrevious(adapterMetaDir)
   const entries = []
@@ -132,6 +214,8 @@ export async function runUpdate({
     maxReleases,
     now,
     logger,
+    cdn,
+    distDir,
     entries,
     reports,
   })
@@ -144,6 +228,8 @@ export async function runUpdate({
     maxReleases,
     now,
     logger,
+    cdn,
+    distDir,
     entries,
     reports,
   })

@@ -74,6 +74,7 @@ test('resolves the latest valid release and hashes the asset', async () => {
   const resolved = await resolveLatestRelease({ github, owner: 'owner', repo: 'repo', pluginId: 'demo-plugin' })
   assert.equal(resolved.version, '1.2.3')
   assert.equal(resolved.summary.id, 'demo-plugin')
+  assert.deepEqual(resolved.bytes, bytes)
   assert.equal(resolved.sha256, createHash('sha256').update(bytes).digest('hex'))
   assert.equal(resolved.md5, createHash('md5').update(bytes).digest('hex'))
   assert.equal(resolved.totalDownloadCount, 0)

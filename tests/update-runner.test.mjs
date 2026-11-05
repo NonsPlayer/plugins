@@ -158,12 +158,15 @@ async function tempRoot(t) {
 test('writes plugin and adapter metadata and catalogue output', async (t) => {
   const root = await tempRoot(t)
   await mkdir(path.join(root, 'catalogue'), { recursive: true })
+  await mkdir(path.join(root, 'dists'), { recursive: true })
   await writeFile(path.join(root, 'catalogue', 'demo-plugin.md'), 'old page')
   await writeFile(path.join(root, 'catalogue', 'removed-plugin.md'), 'removed page')
+  await writeFile(path.join(root, 'dists', 'old.zip'), 'old artifact')
   const result = await runUpdate({
     root,
     registrations: { plugins: [registration], adapters: [adapterRegistration] },
     github: fakeGitHub(),
+    cdn: { directory: 'dists', baseUrl: 'https://nons-dist.example' },
     now: () => '2026-01-01T00:00:00.000Z',
     logger: { log() {}, warn() {}, error() {} },
   })
@@ -179,6 +182,14 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
   assert.equal(index.adapters[0].id, 'demo-adapter')
   assert.deepEqual(index.adapters[0].platforms, ['netease'])
   assert.equal(index.adapters[0].total_download_count, 18)
+
+  const pluginDist = `plugin-demo-plugin-1.2.3-${index.plugins[0].artifact.sha256.slice(0, 16)}.zip`
+  const adapterDist = `adapter-demo-adapter-1.0.0-${index.adapters[0].artifact.sha256.slice(0, 16)}.zip`
+  assert.equal(index.plugins[0].artifact.url, `https://nons-dist.example/${pluginDist}`)
+  assert.equal(index.adapters[0].artifact.url, `https://nons-dist.example/${adapterDist}`)
+  assert.deepEqual((await readdir(path.join(root, 'dists'))).sort(), [pluginDist, adapterDist].sort())
+  assert.equal((await readFile(path.join(root, 'dists', pluginDist))).length, index.plugins[0].artifact.size)
+  assert.equal((await readFile(path.join(root, 'dists', adapterDist))).length, index.adapters[0].artifact.size)
 
   assert.deepEqual((await readdir(path.join(root, 'meta'))).sort(), [
     'README.md', 'adapters', 'authors.json', 'index.json', 'plugins',
@@ -221,6 +232,7 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
   assert.match(readme, /\[Demo\]\(\.\/plugins\/demo-plugin\.md\)/)
   const pluginPage = await readFile(path.join(root, 'catalogue', 'plugins', 'demo-plugin.md'), 'utf8')
   assert.match(pluginPage, /# Demo/)
+  assert.match(pluginPage, new RegExp(index.plugins[0].artifact.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   const page = await readFile(path.join(root, 'catalogue', 'adapters', 'demo-adapter.md'), 'utf8')
   assert.match(page, /契约版本/)
 })

@@ -83,6 +83,7 @@ test('update pipeline writes and preserves non-installable source metadata on fa
   t.after(() => rm(root, { recursive: true, force: true }))
   const args = {
     root, registrations: { plugins: [], adapters: [registration] },
+    cdn: { directory: 'dists', baseUrl: 'https://nons-dist.example' },
     logger: { log() {}, warn() {}, error() {} },
   }
   const result = await runUpdate({ ...args, github: githubFor() })
@@ -90,12 +91,25 @@ test('update pipeline writes and preserves non-installable source metadata on fa
   const file = path.join(root, 'meta', 'index.json')
   const index = JSON.parse(await readFile(file, 'utf8'))
   assert.equal(index.adapters[0].installable, false)
-  assert.equal(index.adapters[0].sourceArtifact.url, 'https://example.org/source.zip')
+  assert.equal(
+    index.adapters[0].sourceArtifact.url,
+    `https://nons-dist.example/adapter-native-adapter-1.0.0-${index.adapters[0].sourceArtifact.sha256.slice(0, 16)}.zip`,
+  )
   assert.equal(index.adapters[0].total_download_count, 13)
-  const failed = await runUpdate({ ...args, github: { async listReleases() { throw new Error('offline') } } })
+  const cdnUrl = index.adapters[0].sourceArtifact.url
+  const oldGithub = githubFor()
+  const failed = await runUpdate({
+    ...args,
+    github: {
+      async listReleases() { throw new Error('offline') },
+      download: oldGithub.download,
+    },
+  })
   assert.equal(failed.failed, 1)
-  assert.equal(JSON.parse(await readFile(file, 'utf8')).adapters[0].artifact, null)
-  assert.equal(JSON.parse(await readFile(file, 'utf8')).adapters[0].total_download_count, 13)
+  const failedIndex = JSON.parse(await readFile(file, 'utf8'))
+  assert.equal(failedIndex.adapters[0].artifact, null)
+  assert.equal(failedIndex.adapters[0].sourceArtifact.url, cdnUrl)
+  assert.equal(failedIndex.adapters[0].total_download_count, 13)
   const page = await readFile(path.join(root, 'catalogue', 'adapters', 'native-adapter.md'), 'utf8')
   assert.match(page, /不可安装/)
 })

@@ -51,6 +51,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Sync release artifacts to Cloudflare R2
+        run: aws s3 sync dists "s3://${R2_DIST_BUCKET}" --endpoint-url "${R2_ENDPOINT}" --region auto --delete --cache-control "public, max-age=31536000, immutable" --only-show-errors
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: 'true'
+          R2_DIST_BUCKET: nons-plugin-dists
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+
       - name: Publish meta branch
         uses: s0/git-publish-subdir-action@ac113f6bfe8896e85a373534242c949a7ea74c98
         env:

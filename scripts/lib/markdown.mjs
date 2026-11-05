@@ -109,7 +109,7 @@ function renderIntroductions(record, lines) {
 function renderDownload(release, lines, heading = '下载') {
   const asset = release.releases[0].asset
   lines.push(`## ${heading}`, '')
-  lines.push(`- [${asset.name}](${asset.browser_download_url})`)
+  lines.push(`- [${asset.name}](${asset.cdn_url ?? asset.browser_download_url})`)
   lines.push(`- 大小：${asset.size ?? '未知'} 字节`)
   lines.push(`- SHA-256：\`${asset.hash_sha256}\``)
   lines.push('')

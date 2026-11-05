@@ -1,5 +1,9 @@
 {
   "update": {
     "maxReleases": 20
+  },
+  "cdn": {
+    "directory": "dists",
+    "baseUrl": "https://nons-dist.miaoyww.top"
   }
 }

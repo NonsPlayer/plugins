@@ -130,7 +130,8 @@ CI 会校验 schema、`id` 与目录名、仓库和分支、许可证、`related
 2. 下载 ZIP 并读取 `manifest.json`；
 3. 校验 id、版本和 tag；
 4. 计算 MD5/SHA-256；
-5. 更新 `meta` 和 `catalogue` 分支；随后将 `meta` 内容同步到 Cloudflare R2，并删除桶内已经不在最新 `meta/` 中的对象。
+5. 把最新 ZIP 平铺上传到 Cloudflare R2 的 `nons-plugin-dists` 桶，并删除桶内上一次的产物；
+6. 更新 `meta` 和 `catalogue` 分支，将 `meta` 内容同步到 `nons-plugin` 桶；索引中的安装包地址指向 `https://nons-dist.miaoyww.top/<文件名>`。
 
 如果新版本校验失败，脚本保留上一次成功的数据，并在 `update_report.json` 中记录错误。
 

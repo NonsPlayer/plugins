@@ -1,6 +1,7 @@
 node_modules/
 meta/
 catalogue/
+dists/
 .local/
 *.log
 .DS_Store

@@ -104,6 +104,7 @@ export async function resolveLatestRelease({
         throw new Error(`tag version ${candidate.version} does not match manifest version ${manifest.version}`)
       }
       return {
+        bytes,
         release: candidate.release,
         version: candidate.version,
         asset: candidate.asset,

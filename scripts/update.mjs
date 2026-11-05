@@ -2,6 +2,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { normalizeCdnConfig } from './lib/dists.mjs'
 import { createGitHubClient } from './lib/github.mjs'
 import { loadAllRegistrations } from './lib/registration.mjs'
 import { runUpdate } from './lib/update-runner.mjs'
@@ -21,6 +22,7 @@ const { entries, failed } = await runUpdate({
   registrations,
   github: createGitHubClient({ token }),
   maxReleases: config.update?.maxReleases ?? 20,
+  cdn: normalizeCdnConfig(config.cdn),
 })
 
 const total = registrations.plugins.length + registrations.adapters.length

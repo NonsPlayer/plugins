@@ -114,6 +114,46 @@ test('builds an aggregate index for plugins and adapters', () => {
   assert.equal(index.adapters[0].total_download_count, 42)
 })
 
+test('uses the CDN URL in indexes while metadata keeps the GitHub asset URL', () => {
+  const cdnUrl = 'https://nons-dist.example/plugin-demo-plugin-1.2.3-aaaaaaaaaaaaaaaa.zip'
+  const entry = buildEntry('plugin', registration, resolved(), { artifactUrl: cdnUrl })
+  const index = buildIndex([entry], { generatedAt: '2026-01-01T00:00:00Z' })
+
+  assert.equal(index.plugins[0].artifact.url, cdnUrl)
+  assert.equal(entry.release.releases[0].asset.cdn_url, cdnUrl)
+  assert.equal(
+    entry.release.releases[0].asset.browser_download_url,
+    'https://example.com/demo-plugin-1.2.3.zip',
+  )
+  assert.equal(Object.hasOwn(index.plugins[0].artifact, 'github_url'), false)
+})
+
+test('puts the CDN URL into sourceArtifact for source adapters', () => {
+  const cdnUrl = 'https://nons-dist.example/adapter-demo-adapter-1.0.0-bbbbbbbbbbbbbbbb.zip'
+  const sourceResolved = {
+    ...adapterResolved(),
+    summary: {
+      id: 'demo-adapter',
+      name: 'Demo Adapter',
+      version: '1.0.0',
+      description: 'A demo adapter',
+      distribution: 'source',
+      installable: false,
+    },
+  }
+  const entry = buildEntry(
+    'adapter',
+    { ...adapterRegistration, distribution: 'source' },
+    sourceResolved,
+    { artifactUrl: cdnUrl },
+  )
+  const index = buildIndex([entry], { generatedAt: '2026-01-01T00:00:00Z' })
+
+  assert.equal(index.adapters[0].artifact, null)
+  assert.equal(index.adapters[0].sourceArtifact.url, cdnUrl)
+  assert.equal(index.adapters[0].sourceArtifact.size, 1024)
+})
+
 test('aggregates authors per kind', () => {
   const entries = [
     buildEntry('plugin', registration, resolved()),

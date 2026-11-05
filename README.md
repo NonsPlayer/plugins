@@ -29,6 +29,7 @@
 ## 更新
 
 1. 直接在自己的仓库发布新的 GitHub Release 即可.
+2. 定时任务会把最新 Release 的 ZIP 镜像到 `https://nons-dist.miaoyww.top/`，索引中的安装包地址指向该 CDN；每次更新会替换桶内上一次的产物.
 
 ## 禁用以及删除
 

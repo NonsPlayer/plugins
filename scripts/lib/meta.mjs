@@ -17,7 +17,7 @@ export function buildRecord(kind, registration) {
   }
 }
 
-export function buildEntry(kind, registration, resolved) {
+export function buildEntry(kind, registration, resolved, { artifactUrl = null } = {}) {
   const record = buildRecord(kind, registration)
   const meta = {
     schema_version: 1,
@@ -44,6 +44,7 @@ export function buildEntry(kind, registration, resolved) {
           download_count: resolved.asset.download_count ?? 0,
           created_at: resolved.asset.created_at ?? null,
           browser_download_url: resolved.asset.browser_download_url,
+          ...(artifactUrl ? { cdn_url: artifactUrl } : {}),
           hash_md5: resolved.md5,
           hash_sha256: resolved.sha256,
         },
@@ -74,7 +75,7 @@ function indexEntry(entry) {
     blocked: record.blocked,
     unavailable: false,
     artifact: {
-      url: asset.browser_download_url,
+      url: asset.cdn_url ?? asset.browser_download_url,
       size: asset.size,
       sha256: asset.hash_sha256,
       md5: asset.hash_md5,
