@@ -133,6 +133,8 @@ CI 会校验 schema、`id` 与目录名、仓库和分支、许可证、`related
 5. 把最新 ZIP 平铺上传到 Cloudflare R2 的 `nons-plugin-dists` 桶，并删除桶内上一次的产物；
 6. 更新 `meta` 和 `catalogue` 分支，将 `meta` 内容同步到 `nons-plugin` 桶；索引中的安装包地址指向 `https://nons-dist.miaoyww.top/<文件名>`。
 
+产物桶使用独立的 `R2_DIST_ACCESS_KEY_ID` 与 `R2_DIST_SECRET_ACCESS_KEY`；`R2_ENDPOINT` 与索引桶共用。
+
 如果新版本校验失败，脚本保留上一次成功的数据，并在 `update_report.json` 中记录错误。
 
 ## 修改元数据、弃用与下架
