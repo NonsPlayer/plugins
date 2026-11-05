@@ -1,0 +1,16 @@
+{
+  "id": "bilibili",
+  "repository": "https://github.com/Miaoyww/nons-adapter-bilibili",
+  "branch": "main",
+  "authors": [
+    {
+      "name": "Miaoyww",
+      "link": "https://github.com/Miaoyww"
+    }
+  ],
+  "license": "MIT",
+  "labels": ["bilibili", "music"],
+  "introduction": {
+    "zh-CN": "introduction-zh_cn.md"
+  }
+}
