@@ -92,3 +92,19 @@ test('collects invalid registrations without dropping valid ones', async (t) => 
   assert.equal(loaded.errors[0].kind, 'plugin')
   assert.match(loaded.errors[0].message, /cannot read plugin_info\.json/)
 })
+
+test('skips a leftover directory whose registration file was deleted', async (t) => {
+  const root = await tempRoot(t)
+  await writeRegistration(root, 'plugin', registration)
+  const leftover = path.join(root, 'adapters', 'removed-adapter')
+  await mkdir(leftover, { recursive: true })
+  await writeFile(path.join(leftover, 'introduction-zh_cn.md'), '介绍')
+
+  const loaded = await loadAllRegistrations(root, { tolerant: true })
+  assert.deepEqual(
+    loaded.plugins.map((item) => item.id),
+    ['demo-plugin'],
+  )
+  assert.deepEqual(loaded.adapters, [])
+  assert.deepEqual(loaded.errors, [])
+})

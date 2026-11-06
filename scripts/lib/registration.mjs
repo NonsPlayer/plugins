@@ -36,6 +36,7 @@ async function loadKind(root, kind, { tolerant = false, errors = [] } = {}) {
     try {
       info = JSON.parse(await readFile(file, 'utf8'))
     } catch (error) {
+      if (error.code === 'ENOENT') continue
       report(entry, new Error(`cannot read ${spec.file}: ${error.message}`))
       continue
     }

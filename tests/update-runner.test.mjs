@@ -26,6 +26,14 @@ const manifest = {
   frontend: 'ui.mjs',
 }
 
+const removedRegistration = {
+  ...registration,
+  id: 'removed-plugin',
+  repository: 'https://github.com/owner/removed',
+}
+
+const removedManifest = { ...manifest, id: 'removed-plugin', name: 'Removed' }
+
 const adapterRegistration = {
   id: 'demo-adapter',
   repository: 'https://github.com/owner/adapter',
@@ -54,22 +62,22 @@ const adapterManifest = {
   },
 }
 
-function pluginRelease() {
-  const bytes = zipSync({ 'manifest.json': strToU8(JSON.stringify(manifest)) })
+function pluginRelease(value = manifest, repository = 'owner/repo', assetId = 1) {
+  const bytes = zipSync({ 'manifest.json': strToU8(JSON.stringify(value)) })
   return {
     draft: false,
     prerelease: false,
     tag_name: 'v1.2.3',
-    html_url: 'https://github.com/owner/repo/releases/tag/v1.2.3',
+    html_url: `https://github.com/${repository}/releases/tag/v1.2.3`,
     name: '',
     body: '',
     created_at: '2026-01-01T00:00:00Z',
     assets: [
       {
-        id: 1,
-        name: 'demo-plugin-1.2.3.zip',
+        id: assetId,
+        name: `${value.id}-1.2.3.zip`,
         size: bytes.length,
-        browser_download_url: 'https://example.com/demo-plugin-1.2.3.zip',
+        browser_download_url: `https://example.com/${value.id}-1.2.3.zip`,
         download_count: 0,
         created_at: '2026-01-01T00:00:00Z',
       },
@@ -104,7 +112,14 @@ function fakeGitHub({ fail = false, downloadCount = 7 } = {}) {
   return {
     async listReleases(owner, repo) {
       if (fail) throw new Error('network down')
-      const release = repo === 'repo' ? pluginRelease() : repo === 'adapter' ? adapterRelease() : null
+      const release =
+        repo === 'repo'
+          ? pluginRelease()
+          : repo === 'removed'
+            ? pluginRelease(removedManifest, 'owner/removed', 3)
+            : repo === 'adapter'
+              ? adapterRelease()
+              : null
       if (!release) return []
       release.assets[0].download_count = downloadCount
       return [release, {
@@ -117,6 +132,11 @@ function fakeGitHub({ fail = false, downloadCount = 7 } = {}) {
       if (url.includes('demo-plugin')) {
         return new Uint8Array(
           zipSync({ 'manifest.json': strToU8(JSON.stringify(manifest)) }),
+        )
+      }
+      if (url.includes('removed-plugin')) {
+        return new Uint8Array(
+          zipSync({ 'manifest.json': strToU8(JSON.stringify(removedManifest)) }),
         )
       }
       return new Uint8Array(zipSync({ 'manifest.json': strToU8(JSON.stringify(adapterManifest)) }))
@@ -235,6 +255,32 @@ test('writes plugin and adapter metadata and catalogue output', async (t) => {
   assert.match(pluginPage, new RegExp(index.plugins[0].artifact.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   const page = await readFile(path.join(root, 'catalogue', 'adapters', 'demo-adapter.md'), 'utf8')
   assert.match(page, /契约版本/)
+})
+
+test('removes artifacts and metadata for a deleted registration', async (t) => {
+  const root = await tempRoot(t)
+  const args = {
+    root,
+    github: fakeGitHub(),
+    cdn: { directory: 'dists', baseUrl: 'https://nons-dist.example' },
+    logger: { log() {}, warn() {}, error() {} },
+  }
+
+  await runUpdate({
+    ...args,
+    registrations: { plugins: [registration, removedRegistration], adapters: [] },
+  })
+  assert.equal((await readdir(path.join(root, 'dists'))).length, 2)
+
+  const result = await runUpdate({
+    ...args,
+    registrations: { plugins: [registration], adapters: [] },
+  })
+  assert.equal(result.failed, 0)
+  const artifacts = await readdir(path.join(root, 'dists'))
+  assert.equal(artifacts.length, 1)
+  assert.match(artifacts[0], /^plugin-demo-plugin-/)
+  await assert.rejects(access(path.join(root, 'meta', 'plugins', 'removed-plugin')), { code: 'ENOENT' })
 })
 
 test('keeps previous metadata on failure and removes stale entries', async (t) => {

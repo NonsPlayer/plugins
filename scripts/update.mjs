@@ -16,8 +16,12 @@ if (!token) {
   process.exit(1)
 }
 
-const registrations = await loadAllRegistrations(root)
-const { entries, failed } = await runUpdate({
+const registrations = await loadAllRegistrations(root, { tolerant: true })
+for (const error of registrations.errors) {
+  console.error(`[error] ${error.kind}/${error.id}: ${error.message}`)
+}
+
+const { entries, failed: releaseFailed } = await runUpdate({
   root,
   registrations,
   github: createGitHubClient({ token }),
@@ -25,9 +29,11 @@ const { entries, failed } = await runUpdate({
   cdn: normalizeCdnConfig(config.cdn),
 })
 
-const total = registrations.plugins.length + registrations.adapters.length
+const total =
+  registrations.plugins.length + registrations.adapters.length + registrations.errors.length
 if (entries.length === 0 && total > 0) {
   console.error('[error] no entry could be generated')
   process.exit(1)
 }
+const failed = releaseFailed + registrations.errors.length
 console.log(`Generated ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}; ${failed} failure(s).`)
