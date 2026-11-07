@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "xiaobai",
+  "name": "小白音乐",
+  "version": "1.0.0",
+  "description": "按网易云、QQ音乐、酷狗和酷我的歌曲 ID 提供备用音源，不参与搜索；可用性取决于上游与歌曲。",
+  "contractVersion": 2,
+  "platforms": [
+    "netease",
+    "qqmusic",
+    "kugou",
+    "kuwo"
+  ],
+  "searchPlatforms": [],
+  "coverHosts": [],
+  "permissions": {
+    "httpHosts": [],
+    "websocketHosts": [],
+    "system": false,
+    "state": false,
+    "credentials": false
+  },
+  "total_download_count": 171
+}
