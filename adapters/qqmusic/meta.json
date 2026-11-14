@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "qqmusic",
+  "name": "QQ 音乐",
+  "version": "1.0.0",
+  "description": null,
+  "contractVersion": 2,
+  "platforms": [
+    "qqmusic"
+  ],
+  "searchPlatforms": [],
+  "coverHosts": [],
+  "permissions": {
+    "httpHosts": [],
+    "websocketHosts": [],
+    "system": true,
+    "state": true,
+    "credentials": true
+  },
+  "total_download_count": 215
+}

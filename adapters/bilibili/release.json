@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "bilibili",
+  "latest_version": "1.0.0",
+  "latest_version_index": 0,
+  "releases": [
+    {
+      "url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/tag/v1.0.0",
+      "name": "v1.0.0",
+      "tag_name": "v1.0.0",
+      "created_at": "2026-11-05T12:55:53Z",
+      "description": "",
+      "prerelease": false,
+      "asset": {
+        "id": 717089101,
+        "name": "bilibili-v1.0.0.zip",
+        "size": 146409,
+        "download_count": 34,
+        "created_at": "2026-11-06T12:24:22Z",
+        "browser_download_url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/download/v1.0.0/bilibili-v1.0.0.zip",
+        "cdn_url": "https://nons-dist.miaoyww.top/adapter-bilibili-1.0.0-cc6d7dfec4eb99e3.zip",
+        "hash_md5": "0389a45a3780a5b5dd303577d3efdcc5",
+        "hash_sha256": "cc6d7dfec4eb99e3dd949530df09b0a38bfe9710b76308634d3d43591ae87778"
+      },
+      "meta": {
+        "schema_version": 1,
+        "id": "bilibili",
+        "name": "哔哩哔哩",
+        "version": "1.0.0",
+        "description": "扫码登录哔哩哔哩，搜索并播放视频音轨，可为歌曲查找和播放 MV。",
+        "contractVersion": 2,
+        "platforms": [
+          "bilibili"
+        ],
+        "searchPlatforms": [],
+        "coverHosts": [],
+        "permissions": {
+          "httpHosts": [],
+          "websocketHosts": [],
+          "system": true,
+          "state": true,
+          "credentials": true
+        },
+        "total_download_count": 46
+      }
+    }
+  ],
+  "history": [
+    {
+      "version": "1.0.0",
+      "tag_name": "v1.0.0",
+      "url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/tag/v1.0.0",
+      "asset_url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/download/v1.0.0/bilibili-v1.0.0.zip",
+      "size": 146409,
+      "created_at": "2026-11-05T12:55:53Z"
+    },
+    {
+      "version": "0.1.0",
+      "tag_name": "v0.1.0",
+      "url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/tag/v0.1.0",
+      "asset_url": "https://github.com/Miaoyww/nons-adapter-bilibili/releases/download/v0.1.0/bilibili-v0.1.0.zip",
+      "size": 146348,
+      "created_at": "2026-11-05T09:56:28Z"
+    }
+  ]
+}

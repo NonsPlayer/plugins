@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "netease-island",
+  "name": "灵动岛",
+  "version": "2.0.0",
+  "description": "识别剪贴板中的网易云音乐链接，在灵动岛中查看歌曲并快速播放。",
+  "permissions": [
+    "clipboard:read",
+    "music:metadata",
+    "player:control",
+    "ui",
+    "config"
+  ],
+  "httpHosts": null,
+  "fileRoots": null,
+  "engines": {
+    "app": "^1.0.0",
+    "pluginApi": "^3.0.0",
+    "uiApi": "^3.0.0"
+  },
+  "backend": "backend.wasm",
+  "frontend": "ui.mjs",
+  "total_download_count": 121
+}

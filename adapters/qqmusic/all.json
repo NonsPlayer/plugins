@@ -1,0 +1,118 @@
+{
+  "record": {
+    "schema_version": 1,
+    "kind": "adapter",
+    "distribution": "component",
+    "id": "qqmusic",
+    "repository": "https://github.com/Miaoyww/nons-adapter-qqmusic",
+    "branch": "main",
+    "authors": [
+      {
+        "name": "Miaoyww",
+        "link": "https://github.com/Miaoyww"
+      }
+    ],
+    "license": "MIT",
+    "related_path": ".",
+    "labels": [],
+    "preview": null,
+    "introduction": {},
+    "deprecated": false,
+    "blocked": false
+  },
+  "release": {
+    "schema_version": 1,
+    "id": "qqmusic",
+    "latest_version": "1.0.0",
+    "latest_version_index": 0,
+    "releases": [
+      {
+        "url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/tag/v1.0.0",
+        "name": "v1.0.0",
+        "tag_name": "v1.0.0",
+        "created_at": "2026-11-05T14:15:02Z",
+        "description": "",
+        "prerelease": false,
+        "asset": {
+          "id": 717092049,
+          "name": "qqmusic-v1.0.0.zip",
+          "size": 327701,
+          "download_count": 37,
+          "created_at": "2026-11-06T12:25:21Z",
+          "browser_download_url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/download/v1.0.0/qqmusic-v1.0.0.zip",
+          "cdn_url": "https://nons-dist.miaoyww.top/adapter-qqmusic-1.0.0-dcfd16e6a33206fb.zip",
+          "hash_md5": "45e43153705875b57d15683204b11c37",
+          "hash_sha256": "dcfd16e6a33206fb2601db03a71d14ec32a58ba3dcaa2e037be37d6ee8fa4232"
+        },
+        "meta": {
+          "schema_version": 1,
+          "id": "qqmusic",
+          "name": "QQ 音乐",
+          "version": "1.0.0",
+          "description": null,
+          "contractVersion": 2,
+          "platforms": [
+            "qqmusic"
+          ],
+          "searchPlatforms": [],
+          "coverHosts": [],
+          "permissions": {
+            "httpHosts": [],
+            "websocketHosts": [],
+            "system": true,
+            "state": true,
+            "credentials": true
+          },
+          "total_download_count": 215
+        }
+      }
+    ],
+    "history": [
+      {
+        "version": "1.0.0",
+        "tag_name": "v1.0.0",
+        "url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/tag/v1.0.0",
+        "asset_url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/download/v1.0.0/qqmusic-v1.0.0.zip",
+        "size": 327701,
+        "created_at": "2026-11-05T14:15:02Z"
+      },
+      {
+        "version": "0.1.1",
+        "tag_name": "v0.1.1",
+        "url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/tag/v0.1.1",
+        "asset_url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/download/v0.1.1/qqmusic-v0.1.1.zip",
+        "size": 324861,
+        "created_at": "2026-10-30T11:32:44Z"
+      },
+      {
+        "version": "0.1.0",
+        "tag_name": "v0.1.0",
+        "url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/tag/v0.1.0",
+        "asset_url": "https://github.com/Miaoyww/nons-adapter-qqmusic/releases/download/v0.1.0/nsa-qqmusic-v0.1.0.zip",
+        "size": 323744,
+        "created_at": "2026-10-30T09:55:19Z"
+      }
+    ]
+  },
+  "meta": {
+    "schema_version": 1,
+    "id": "qqmusic",
+    "name": "QQ 音乐",
+    "version": "1.0.0",
+    "description": null,
+    "contractVersion": 2,
+    "platforms": [
+      "qqmusic"
+    ],
+    "searchPlatforms": [],
+    "coverHosts": [],
+    "permissions": {
+      "httpHosts": [],
+      "websocketHosts": [],
+      "system": true,
+      "state": true,
+      "credentials": true
+    },
+    "total_download_count": 215
+  }
+}

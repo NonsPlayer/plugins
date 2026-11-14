@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "ncm-converter",
+  "latest_version": "2.0.0",
+  "latest_version_index": 0,
+  "releases": [
+    {
+      "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v2.0.0",
+      "name": "v2.0.0",
+      "tag_name": "v2.0.0",
+      "created_at": "2026-11-08T15:24:16Z",
+      "description": "**Full Changelog**: https://github.com/Miaoyww/ncm-converter/compare/v1.0.3...v2.0.0",
+      "prerelease": false,
+      "asset": {
+        "id": 724343604,
+        "name": "ncm-converter-2.0.0.zip",
+        "size": 2810,
+        "download_count": 23,
+        "created_at": "2026-11-08T15:27:41Z",
+        "browser_download_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v2.0.0/ncm-converter-2.0.0.zip",
+        "cdn_url": "https://nons-dist.miaoyww.top/plugin-ncm-converter-2.0.0-7ffd49da413d5e74.zip",
+        "hash_md5": "46313043d45e9a30a5b84cd676e3ec7c",
+        "hash_sha256": "7ffd49da413d5e74851fedb517d2907768b75e4413fd5b401e824d046beec986"
+      },
+      "meta": {
+        "schema_version": 1,
+        "id": "ncm-converter",
+        "name": "NCM 格式转换",
+        "version": "2.0.0",
+        "description": "批量将本地 NCM 恢复为 MP3 或 FLAC，保留歌曲信息，默认保存到原文件目录。",
+        "permissions": [
+          "ui",
+          "files:selected"
+        ],
+        "httpHosts": null,
+        "fileRoots": [
+          "*"
+        ],
+        "engines": {
+          "app": "^1.0.0",
+          "pluginApi": "^3.0.0",
+          "uiApi": "^3.0.0"
+        },
+        "backend": null,
+        "frontend": "ui.mjs",
+        "total_download_count": 164
+      }
+    }
+  ],
+  "history": [
+    {
+      "version": "2.0.0",
+      "tag_name": "v2.0.0",
+      "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v2.0.0",
+      "asset_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v2.0.0/ncm-converter-2.0.0.zip",
+      "size": 2810,
+      "created_at": "2026-11-08T15:24:16Z"
+    },
+    {
+      "version": "1.0.3",
+      "tag_name": "v1.0.3",
+      "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v1.0.3",
+      "asset_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.3/ncm-converter-1.0.3.zip",
+      "size": 2811,
+      "created_at": "2026-10-30T08:26:08Z"
+    },
+    {
+      "version": "1.0.0",
+      "tag_name": "v1.0.0",
+      "url": "https://github.com/Miaoyww/ncm-converter/releases/tag/v1.0.0",
+      "asset_url": "https://github.com/Miaoyww/ncm-converter/releases/download/v1.0.0/ncm-converter-1.0.0.zip",
+      "size": 2809,
+      "created_at": "2026-10-29T06:37:18Z"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "id": "bilibili",
+  "name": "哔哩哔哩",
+  "version": "1.0.0",
+  "description": "扫码登录哔哩哔哩，搜索并播放视频音轨，可为歌曲查找和播放 MV。",
+  "contractVersion": 2,
+  "platforms": [
+    "bilibili"
+  ],
+  "searchPlatforms": [],
+  "coverHosts": [],
+  "permissions": {
+    "httpHosts": [],
+    "websocketHosts": [],
+    "system": true,
+    "state": true,
+    "credentials": true
+  },
+  "total_download_count": 46
+}

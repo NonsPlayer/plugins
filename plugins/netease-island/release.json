@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "netease-island",
+  "latest_version": "2.0.0",
+  "latest_version_index": 0,
+  "releases": [
+    {
+      "url": "https://github.com/Miaoyww/netease-island/releases/tag/v2.0.0",
+      "name": "v2.0.0",
+      "tag_name": "v2.0.0",
+      "created_at": "2026-11-08T15:24:16Z",
+      "description": "## 兼容性\n\n- 需要 Nons 插件 API 3.0.0 与 UI API 3.0.0，不再兼容 API 2.x 宿主。\n- 开发依赖使用 npm 发布的 `@nonsplayer/plugin-sdk@3.0.0`，前端类型与 Rust 后端 WIT 均从该包读取。\n\n## 更新\n\n- 适配 API 3 默认开放的网络能力，移除旧网络权限和主机清单声明。\n- 网易云短链由插件手动跟随最多 3 次跳转，并逐跳校验允许的网易云域名。\n\n## 安装\n\n下载 `netease-island-2.0.0.zip`，在 Nons 设置的插件管理中安装并确认权限。\r\n",
+      "prerelease": false,
+      "asset": {
+        "id": 724344073,
+        "name": "netease-island-2.0.0.zip",
+        "size": 411229,
+        "download_count": 24,
+        "created_at": "2026-11-08T15:27:49Z",
+        "browser_download_url": "https://github.com/Miaoyww/netease-island/releases/download/v2.0.0/netease-island-2.0.0.zip",
+        "cdn_url": "https://nons-dist.miaoyww.top/plugin-netease-island-2.0.0-e7a6218649dcefd5.zip",
+        "hash_md5": "27f4164ecb815364a5daaad925229f3e",
+        "hash_sha256": "e7a6218649dcefd5bef7ccae25f38f2ef6e34f655b7fd64bc559148c305abe97"
+      },
+      "meta": {
+        "schema_version": 1,
+        "id": "netease-island",
+        "name": "灵动岛",
+        "version": "2.0.0",
+        "description": "识别剪贴板中的网易云音乐链接，在灵动岛中查看歌曲并快速播放。",
+        "permissions": [
+          "clipboard:read",
+          "music:metadata",
+          "player:control",
+          "ui",
+          "config"
+        ],
+        "httpHosts": null,
+        "fileRoots": null,
+        "engines": {
+          "app": "^1.0.0",
+          "pluginApi": "^3.0.0",
+          "uiApi": "^3.0.0"
+        },
+        "backend": "backend.wasm",
+        "frontend": "ui.mjs",
+        "total_download_count": 121
+      }
+    }
+  ],
+  "history": [
+    {
+      "version": "2.0.0",
+      "tag_name": "v2.0.0",
+      "url": "https://github.com/Miaoyww/netease-island/releases/tag/v2.0.0",
+      "asset_url": "https://github.com/Miaoyww/netease-island/releases/download/v2.0.0/netease-island-2.0.0.zip",
+      "size": 411229,
+      "created_at": "2026-11-08T15:24:16Z"
+    },
+    {
+      "version": "1.3.0",
+      "tag_name": "v1.3.0",
+      "url": "https://github.com/Miaoyww/netease-island/releases/tag/v1.3.0",
+      "asset_url": "https://github.com/Miaoyww/netease-island/releases/download/v1.3.0/netease-island-1.3.0.zip",
+      "size": 411344,
+      "created_at": "2026-10-31T11:45:25Z"
+    }
+  ]
+}
